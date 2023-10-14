@@ -29,7 +29,7 @@ const ReviewDelivery = () => {
         <Text styles='my-1 text-center flex-1' text='Review Delivery' sm />
       </View>
       <Container styles='my-5 p-4 rounded-md'>
-        <Text text='Picking Up At' md bold />
+        <Text styles='py-4' text='Picking Up At' md bold />
         <View className='border-b-[1px] border-b-gray-300 my-2' />
         <View className='flex-row justify-between items-start'>
           <View>
@@ -46,7 +46,7 @@ const ReviewDelivery = () => {
         </View>
       </Container>
       <Container styles='my-5 p-4 rounded-md'>
-        <Text text='Delivering To' md bold />
+        <Text styles='py-4' text='Delivering To' md bold />
         <View className='border-b-[1px] border-b-gray-300 my-2' />
         <View className='flex-row justify-between items-start'>
           <View>
@@ -64,6 +64,7 @@ const ReviewDelivery = () => {
       </Container>
 
       <Button
+        action={() => router.push("/(delivery)/packageDetails")}
         bgColor='#3EA2FF'
         styles='mt-4'
         textColor='white'
