@@ -37,19 +37,20 @@ const Welcome = () => {
       link: "/(trips)/newTrip",
       title: "Quick Rive",
     },
+    // router.push('/(home)/delivery')
     {
       img: require("../../assets/images/home/truck-fast.png"),
-      link: "",
-      title: "Delivery Rive",
+      link: "/(home)/delivery",
+      title: "Deliver Rive",
     },
     {
       img: require("../../assets/images/home/award.png"),
-      link: "",
+      link: "/(home)",
       title: "Recieve Rive",
     },
     {
       img: require("../../assets/images/home/award.png"),
-      link: "",
+      link: "/(home)",
       title: "Rewards",
     },
   ];

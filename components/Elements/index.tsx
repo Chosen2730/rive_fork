@@ -9,11 +9,14 @@ import {
   useColorScheme,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { useGlobalContext } from "../../AppContext/context";
 export const iconColor = (color?: string | OpaqueColorValue | undefined) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   if (color) {
     return color;
-  } else if (mode === "dark") {
+  } else if (dark) {
     return "white";
   } else {
     return "black";
@@ -21,7 +24,7 @@ export const iconColor = (color?: string | OpaqueColorValue | undefined) => {
 };
 
 type TextType = {
-  text: string;
+  text: any;
   styles?: string;
   md?: any;
   sm?: any;
@@ -31,12 +34,15 @@ type TextType = {
 };
 
 export const Text = ({ text, styles, md, sm, lg, bold, color }: TextType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
+  const textColor = color ? color : dark ? "white" : "black";
   return (
     <DefaultText
       className={styles}
       style={{
-        color: color ? color : mode === "dark" ? "white" : "black",
+        color: textColor,
         fontSize: sm ? 16 : md ? 20 : lg ? 32 : 14,
         fontWeight: bold ? "bold" : "normal",
       }}
@@ -65,7 +71,9 @@ export const TextField = ({
   type,
   place,
 }: TextFieldType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <TextInput
       onChangeText={onChange}
@@ -73,14 +81,10 @@ export const TextField = ({
       keyboardType={type}
       placeholder={place}
       style={{
-        color: mode === "dark" ? "#8A8A8A" : "#8A8A8A",
+        color: dark ? "#8A8A8A" : "#8A8A8A",
         borderWidth: border,
-        borderColor: color
-          ? color
-          : mode === "dark"
-          ? "rgb(31 41 55)"
-          : "#D0D0D0",
-        backgroundColor: mode === "dark" ? "#121212" : "#FFFFFF",
+        borderColor: color ? color : dark ? "rgb(31 41 55)" : "#D0D0D0",
+        backgroundColor: dark ? "#121212" : "#FFFFFF",
       }}
       className={styles}
     />
@@ -102,21 +106,19 @@ export const Container = ({
   styles,
   borderColor,
 }: ContainerType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <View
       style={{
         borderWidth: border,
         borderColor: borderColor
           ? borderColor
-          : mode === "dark"
+          : dark
           ? "rgb(31 41 55)"
           : "#D0D0D0",
-        backgroundColor: color
-          ? color
-          : mode === "dark"
-          ? "#121212"
-          : "#FFFFFF",
+        backgroundColor: color ? color : dark ? "#121212" : "#FFFFFF",
       }}
       className={styles}
     >
@@ -140,16 +142,14 @@ export const Button = ({
   action,
   styles,
 }: ButtonType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <TouchableOpacity
       onPress={action}
       style={{
-        backgroundColor: bgColor
-          ? bgColor
-          : mode === "dark"
-          ? "#121212"
-          : "#FFFFFF",
+        backgroundColor: bgColor ? bgColor : dark ? "#121212" : "#FFFFFF",
       }}
       className={`${styles} p-4 rounded-md`}
     >
@@ -171,16 +171,14 @@ export const ButtonContainer = ({
   styles,
   action,
 }: ButtonContainerType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <TouchableOpacity
       onPress={action}
       style={{
-        backgroundColor: bgColor
-          ? bgColor
-          : mode === "dark"
-          ? "#121212"
-          : "#FFFFFF",
+        backgroundColor: bgColor ? bgColor : dark ? "#121212" : "#FFFFFF",
       }}
       className={`${styles} p-4 rounded-md`}
     >
@@ -205,10 +203,12 @@ export const TextButton = ({
   textStyle,
   action,
 }: TextButtonType) => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <TouchableOpacity
-      style={{ borderColor: mode === "dark" ? "#001C30" : "#F5F5F5" }}
+      style={{ borderColor: dark ? "#001C30" : "#F5F5F5" }}
       className={styles}
       onPress={action}
     >

@@ -17,10 +17,11 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useGlobalContext } from "../../AppContext/context";
 
 const PackageDetails = () => {
   const [selectedRideIndex, setSelectedRideIndex] = useState(0);
-  const mode = useColorScheme();
+  const { theme: dark } = useGlobalContext();
   const transportOptions = [
     {
       vehicle: require("../../assets/images/home/Car.png"),
@@ -40,7 +41,7 @@ const PackageDetails = () => {
     <SafeAreaView style={{ paddingTop: extraPad, flex: 1 }}>
       <View
         style={{
-          backgroundColor: mode === "dark" ? "black" : "transparent",
+          backgroundColor: dark ? "black" : "transparent",
           padding: 16,
           flex: 1,
         }}
