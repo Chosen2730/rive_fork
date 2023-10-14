@@ -62,7 +62,12 @@ const EnterPhone = () => {
             styles='flex-1 ml-2 rounded-md px-4'
           />
         </View>
-        <Button label='Continue' bgColor='#3EA2FF' textColor='white' />
+        <Button
+          action={() => router.push("/(onboarding)/enterOTP")}
+          label='Continue'
+          bgColor='#3EA2FF'
+          textColor='white'
+        />
         <View className='flex-row items-center my-8'>
           <View className='flex-1 h-[1px] bg-gray-600' />
           <Container styles='p-2 py-3' border={1}>
@@ -95,7 +100,11 @@ const EnterPhone = () => {
           <View className='flex-1 h-[1px] bg-gray-600' />
         </View>
 
-        <TextButton textColor='#3EA2FF' label='Login to your account' />
+        <TextButton
+          textStyle='text-center'
+          textColor='#3EA2FF'
+          label='Login to your account'
+        />
         <Text
           text='By continuing, you agree to receive calls, WhatsApp, or SMS messages, from Rive and its affiliates at the provided number.'
           styles='mt-4'

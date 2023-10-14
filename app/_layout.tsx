@@ -51,9 +51,19 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name='(onboarding)' options={{ headerShown: false }} />
-        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='(onboarding)' />
+        <Stack.Screen name='(home)' />
+        <Stack.Screen name='trips/trips' />
+        <Stack.Screen name='trips/pastTrips' />
+        <Stack.Screen
+          name='trips/tripDetails'
+          options={{ presentation: "modal" }}
+        />
+        <Stack.Screen
+          name='trips/packageDetails'
+          options={{ presentation: "modal" }}
+        />
       </Stack>
     </ThemeProvider>
   );

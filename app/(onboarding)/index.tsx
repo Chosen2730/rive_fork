@@ -73,7 +73,6 @@ const Onboard = ({}) => {
                   >
                     <Text
                       text='Get Started'
-                      position='center'
                       bold
                       color='white'
                       styles='text-center text-white'

@@ -1,0 +1,31 @@
+import { View, Image } from "react-native";
+import React from "react";
+import { Button, Text } from "../Elements";
+import { useRouter } from "expo-router";
+
+const NoRives = () => {
+  const router = useRouter();
+  return (
+    <View>
+      <Image
+        className='h-[386px] w-full mx-auto'
+        resizeMode='contain'
+        source={require("../../assets/images/home/cuate.png")}
+      />
+      <Text text='Awaiting your adventure' lg bold styles='text-center my-2' />
+      <Text
+        text='At this moment, there are no active trips in progress. Our top-notch transport rivers are standing by'
+        color='#7A7A7A'
+      />
+      <Button
+        action={() => router.push("/trips/trips")}
+        styles='my-4'
+        textColor='white'
+        label='Start Riving'
+        bgColor='#3EA2FF'
+      />
+    </View>
+  );
+};
+
+export default NoRives;

@@ -1,25 +1,14 @@
 import {
   Text as DefaultText,
+  GestureResponderEvent,
   KeyboardTypeOptions,
   OpaqueColorValue,
+  Platform,
   TouchableOpacity,
   View,
   useColorScheme,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-
-type TextType = {
-  text: string;
-  styles?: string;
-  md?: any;
-  sm?: any;
-  lg?: any;
-  bold?: any;
-  position?: any;
-  color?: string;
-  just?: string;
-};
-
 export const iconColor = (color?: string | OpaqueColorValue | undefined) => {
   const mode = useColorScheme();
   if (color) {
@@ -31,17 +20,17 @@ export const iconColor = (color?: string | OpaqueColorValue | undefined) => {
   }
 };
 
-export const Text = ({
-  text,
-  styles,
-  md,
-  sm,
-  lg,
-  bold,
-  position,
-  color,
-  just,
-}: TextType) => {
+type TextType = {
+  text: string;
+  styles?: string;
+  md?: any;
+  sm?: any;
+  lg?: any;
+  bold?: any;
+  color?: string;
+};
+
+export const Text = ({ text, styles, md, sm, lg, bold, color }: TextType) => {
   const mode = useColorScheme();
   return (
     <DefaultText
@@ -64,6 +53,7 @@ type TextFieldType = {
   color?: string;
   border?: number;
   type?: KeyboardTypeOptions;
+  place?: string;
 };
 
 export const TextField = ({
@@ -73,6 +63,7 @@ export const TextField = ({
   border,
   styles,
   type,
+  place,
 }: TextFieldType) => {
   const mode = useColorScheme();
   return (
@@ -80,6 +71,7 @@ export const TextField = ({
       onChangeText={onChange}
       value={val}
       keyboardType={type}
+      placeholder={place}
       style={{
         color: mode === "dark" ? "#8A8A8A" : "#8A8A8A",
         borderWidth: border,
@@ -137,12 +129,21 @@ type ButtonType = {
   label: string;
   bgColor?: string;
   textColor?: string;
+  action?: (event: GestureResponderEvent) => void;
+  styles?: string;
 };
 
-export const Button = ({ label, bgColor, textColor }: ButtonType) => {
+export const Button = ({
+  label,
+  bgColor,
+  textColor,
+  action,
+  styles,
+}: ButtonType) => {
   const mode = useColorScheme();
   return (
     <TouchableOpacity
+      onPress={action}
       style={{
         backgroundColor: bgColor
           ? bgColor
@@ -150,7 +151,7 @@ export const Button = ({ label, bgColor, textColor }: ButtonType) => {
           ? "#121212"
           : "#FFFFFF",
       }}
-      className='p-4 rounded-md'
+      className={`${styles} p-4 rounded-md`}
     >
       <Text text={label} color={textColor} styles='text-center' />
     </TouchableOpacity>
@@ -189,13 +190,29 @@ type TextButtonType = {
   label: string;
   textColor?: string;
   styles?: string;
+  textStyle?: string;
+  borderColor?: string;
+  action?: (event: GestureResponderEvent) => void;
 };
 
-export const TextButton = ({ label, styles, textColor }: TextButtonType) => {
+export const TextButton = ({
+  label,
+  styles,
+  textColor,
+  textStyle,
+  action,
+}: TextButtonType) => {
   const mode = useColorScheme();
   return (
-    <TouchableOpacity className={styles}>
-      <Text text={label} color={textColor} styles='text-center' />
+    <TouchableOpacity
+      style={{ borderColor: mode === "dark" ? "#001C30" : "#F5F5F5" }}
+      className={styles}
+      onPress={action}
+    >
+      <Text text={label} color={textColor} styles={textStyle} />
     </TouchableOpacity>
   );
 };
+
+export const paddingTop: any = Platform.OS === "ios" ? -30 : -20;
+export const paddingBottom: any = Platform.OS === "ios" ? -20 : 20;
