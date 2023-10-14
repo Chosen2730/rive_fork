@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";
 import TripList from "../../components/Trips/triplist";
 import { TripType } from "../../types";
-import { currentTrips } from "../trips/pastTrips";
+import { currentTrips } from "../(trips)/pastTrips";
 
 const Trips = () => {
   const router = useRouter();

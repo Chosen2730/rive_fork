@@ -162,16 +162,19 @@ type ButtonContainerType = {
   bgColor?: string;
   children?: any;
   styles?: string;
+  action?: (event: GestureResponderEvent) => void;
 };
 
 export const ButtonContainer = ({
   bgColor,
   children,
   styles,
+  action,
 }: ButtonContainerType) => {
   const mode = useColorScheme();
   return (
     <TouchableOpacity
+      onPress={action}
       style={{
         backgroundColor: bgColor
           ? bgColor

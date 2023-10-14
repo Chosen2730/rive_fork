@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React from "react";
 import {
   Container,
@@ -15,6 +15,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Trips = () => {
   const router = useRouter();
+  const navigateTo = useNavigation();
 
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
@@ -56,7 +57,7 @@ const Trips = () => {
           source={require("../../assets/images/home/Subtract.png")}
         />
       </View>
-      <TouchableOpacity onPress={() => router.push("/trips/selectLocation")}>
+      <TouchableOpacity onPress={() => router.push("/(trips)/selectLocation")}>
         <Container
           border={1}
           styles='flex-row items-center pl-4 justify-between rounded-md mt-4'

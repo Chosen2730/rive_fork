@@ -31,11 +31,10 @@ type NavType = {
 
 const Welcome = () => {
   const router = useRouter();
-  // router.push("/trips/");
   const topNav: NavType[] = [
     {
       img: require("../../assets/images/home/smart-car.png"),
-      link: "/trips/trips",
+      link: "/(trips)/newTrip",
       title: "Quick Rive",
     },
     {

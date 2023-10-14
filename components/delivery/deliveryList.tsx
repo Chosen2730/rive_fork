@@ -1,27 +1,26 @@
 import { View } from "react-native";
 import React from "react";
+import { RiveType } from "../../app/(home)";
 import { Container, Text, TextButton } from "../Elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { TripType } from "../../types";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 
 type RiveListType = {
-  trips: TripType[];
+  delivery: RiveType[];
 };
-const TripList = ({ trips }: RiveListType) => {
-  const router = useRouter();
+const DeliveryList = ({ delivery }: RiveListType) => {
   return (
     <View>
       <View className='flex-row justify-between'>
-        <Text color='#7A7A7A' md bold text='Past Trips' />
+        <Text color='#7A7A7A' md bold text='Deliveries' />
         <TextButton
-          action={() => router.push("/(trips)/pastTrips")}
+          action={() => router.push("/(delivery)/pastDeliveries")}
           textColor='#3EA2FF'
           label='See all'
         />
       </View>
       <View className='mt-5'>
-        {trips.map(({ amount, date, description, status }, ind) => (
+        {delivery.map(({ amount, date, description, status }, ind) => (
           <TouchableOpacity key={ind}>
             <Container styles='p-8 rounded-md mb-4'>
               <View className='flex-row items-center justify-between'>
@@ -51,4 +50,4 @@ const TripList = ({ trips }: RiveListType) => {
   );
 };
 
-export default TripList;
+export default DeliveryList;

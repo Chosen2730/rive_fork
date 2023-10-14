@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import { Container, Text, iconColor } from "../../components/Elements";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList } from "react-native-gesture-handler";
-import TripDetails from "./tripDetails";
 
 export const currentTrips: TripType[] = [
   {
@@ -35,7 +34,7 @@ export const currentTrips: TripType[] = [
   },
 ];
 
-const PastTrips = () => {
+const PastDeliveries = () => {
   const [trips, setTrips] = useState<TripType[]>(currentTrips);
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
@@ -48,7 +47,7 @@ const PastTrips = () => {
         color={iconColor()}
       />
       <View className='my-4'>
-        <Text text='Past Trips' lg bold />
+        <Text text='Past Deliveries' lg bold />
         <Text
           color='#7A7A7A'
           styles='my-1'
@@ -58,34 +57,32 @@ const PastTrips = () => {
       </View>
       <FlatList
         data={trips}
-        renderItem={({ index, item }) => (
-          <TouchableOpacity onPress={() => router.push("/trips/tripDetails")}>
-            <Container styles='p-8 rounded-md mb-4'>
-              <View className='flex-row items-center justify-between'>
-                <Text text={`₦ ${item.amount}`} />
-                <View className='flex-row items-center'>
-                  <View
-                    className={`w-2 h-2 rounded-full ${
-                      item.status === "cancelled"
-                        ? "bg-red-600"
-                        : item.status === "completed"
-                        ? "bg-green-500"
-                        : item.status === "in progress"
-                        ? "bg-yellow-500"
-                        : "bg-blue-500"
-                    }  mr-2`}
-                  />
-                  <Text styles='capitalize' text={item.status} />
-                </View>
+        renderItem={({ item }) => (
+          <Container styles='p-8 rounded-md mb-4'>
+            <View className='flex-row items-center justify-between'>
+              <Text text={`₦ ${item.amount}`} />
+              <View className='flex-row items-center'>
+                <View
+                  className={`w-2 h-2 rounded-full ${
+                    item.status === "cancelled"
+                      ? "bg-red-600"
+                      : item.status === "completed"
+                      ? "bg-green-500"
+                      : item.status === "in progress"
+                      ? "bg-yellow-500"
+                      : "bg-blue-500"
+                  }  mr-2`}
+                />
+                <Text styles='capitalize' text={item.status} />
               </View>
-              <Text color='#7A7A7A' styles='my-2' text={item.date} />
-              <Text color='#7A7A7A' text={item.description} />
-            </Container>
-          </TouchableOpacity>
+            </View>
+            <Text color='#7A7A7A' styles='my-2' text={item.date} />
+            <Text color='#7A7A7A' text={item.description} />
+          </Container>
         )}
       />
     </SafeAreaView>
   );
 };
 
-export default PastTrips;
+export default PastDeliveries;

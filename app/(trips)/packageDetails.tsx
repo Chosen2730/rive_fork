@@ -16,6 +16,7 @@ import {
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const PackageDetails = () => {
   const [selectedRideIndex, setSelectedRideIndex] = useState(0);
@@ -31,18 +32,10 @@ const PackageDetails = () => {
       name: "Ford escape 6GK2C14",
       price: "5000",
     },
-    {
-      vehicle: require("../../assets/images/home/Objects.png"),
-      name: "Ford escape 6GK2C14",
-      price: "5000",
-    },
-    {
-      vehicle: require("../../assets/images/home/Objects.png"),
-      name: "Ford escape 6GK2C14",
-      price: "5000",
-    },
   ];
   const extraPad = Platform.OS !== "ios" ? paddingTop + 20 : paddingTop;
+
+  const router = useRouter();
   return (
     <SafeAreaView style={{ paddingTop: extraPad, flex: 1 }}>
       <View
@@ -81,13 +74,19 @@ const PackageDetails = () => {
             <Text text='Ford escape 6GK2C14' color='#7A7A7A' />
           </Container>
           <ButtonContainer
+            action={() => router.replace("/(trips)/paymentMethod")}
             bgColor='#D9E8F6'
             styles='flex-row justify-between border-2 border-gray-200 my-4'
           >
             <Text color='black' text='Choose Payment Method' />
             <AntDesign name='right' size={24} color='black' />
           </ButtonContainer>
-          <Button label='Complete' bgColor='#3EA2FF' textColor='white' />
+          <Button
+            action={() => router.replace("/(trips)/complete")}
+            label='Complete'
+            bgColor='#3EA2FF'
+            textColor='white'
+          />
         </View>
       </View>
     </SafeAreaView>

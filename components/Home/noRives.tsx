@@ -18,7 +18,7 @@ const NoRives = () => {
         color='#7A7A7A'
       />
       <Button
-        action={() => router.push("/trips/trips")}
+        action={() => router.push("/(trips)/newTrip")}
         styles='my-4'
         textColor='white'
         label='Start Riving'

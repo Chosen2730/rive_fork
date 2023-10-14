@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import {
   Container,
   Text,
@@ -12,17 +12,10 @@ import {
 } from "../../components/Elements";
 
 import { Image, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import NoRives from "../../components/Home/noRives";
-import TripList from "../../components/Trips/triplist";
-import { TripType } from "../../types";
-import { currentTrips } from "../trips/pastTrips";
 
 const Trips = () => {
   const router = useRouter();
-
-  const [trips, setTrips] = useState<TripType[]>(currentTrips);
 
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
@@ -59,13 +52,13 @@ const Trips = () => {
         </View>
       </Container>
       <Button
-        action={() => router.push("/trips/packageDetails")}
+        action={() => router.push("/(trips)/packageDetails")}
         label='Proceed'
         bgColor='#3EA2FF'
         textColor='white'
         styles='my-4'
       />
-      <View className='mx-4'>
+      <View className='-mx-4'>
         <Image
           className='w-full h-full'
           source={require("../../assets/images/home/Map.png")}
