@@ -12,11 +12,14 @@ import {
 import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { useGlobalContext } from "../../AppContext/context";
 
 const Trips = () => {
   const router = useRouter();
   const navigateTo = useNavigation();
 
+  const { MAPS_KEY } = useGlobalContext();
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
       <View className='flex-row items-center justify-between'>

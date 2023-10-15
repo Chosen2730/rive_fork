@@ -133,6 +133,7 @@ type ButtonType = {
   textColor?: string;
   action?: (event: GestureResponderEvent) => void;
   styles?: string;
+  isDisabled?: boolean;
 };
 
 export const Button = ({
@@ -141,6 +142,7 @@ export const Button = ({
   textColor,
   action,
   styles,
+  isDisabled,
 }: ButtonType) => {
   const {
     theme: { dark },
@@ -148,12 +150,23 @@ export const Button = ({
   return (
     <TouchableOpacity
       onPress={action}
+      disabled={isDisabled}
       style={{
-        backgroundColor: bgColor ? bgColor : dark ? "#121212" : "#FFFFFF",
+        backgroundColor: isDisabled
+          ? "#D0D0D0"
+          : bgColor
+          ? bgColor
+          : dark
+          ? "#121212"
+          : "#FFFFFF",
       }}
       className={`${styles} p-4 rounded-md`}
     >
-      <Text text={label} color={textColor} styles='text-center' />
+      <Text
+        text={label}
+        color={isDisabled ? "#8A8A8A" : textColor}
+        styles='text-center'
+      />
     </TouchableOpacity>
   );
 };

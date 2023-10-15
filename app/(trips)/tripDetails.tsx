@@ -1,13 +1,16 @@
 import { View, useColorScheme } from "react-native";
 import React from "react";
 import { Button, Container, Text } from "../../components/Elements";
+import { useGlobalContext } from "../../AppContext/context";
 
 const TripDetails = () => {
-  const mode = useColorScheme();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   return (
     <View
       style={{
-        backgroundColor: mode === "dark" ? "black" : "transparent",
+        backgroundColor: dark ? "black" : "transparent",
         flex: 1,
         padding: 16,
       }}

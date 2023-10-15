@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Container,
@@ -15,6 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";
 import RiveList from "../../components/Home/riveList";
+import { useGlobalContext } from "../../AppContext/context";
 
 export type RiveType = {
   amount: number;
@@ -83,6 +84,11 @@ const Welcome = () => {
   ];
 
   const [rives, setRives] = useState<RiveType[]>(currentRives);
+  const { getUserLocation } = useGlobalContext();
+
+  useEffect(() => {
+    // getUserLocation();
+  }, []);
 
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>

@@ -21,7 +21,7 @@ import { useGlobalContext } from "../../AppContext/context";
 
 const PackageDetails = () => {
   const [selectedRideIndex, setSelectedRideIndex] = useState(0);
-  const { theme: dark } = useGlobalContext();
+  const { theme: dark, completeTrip } = useGlobalContext();
   const transportOptions = [
     {
       vehicle: require("../../assets/images/home/Car.png"),
@@ -41,7 +41,6 @@ const PackageDetails = () => {
     <SafeAreaView style={{ paddingTop: extraPad, flex: 1 }}>
       <View
         style={{
-          backgroundColor: dark ? "black" : "transparent",
           padding: 16,
           flex: 1,
         }}
@@ -83,7 +82,10 @@ const PackageDetails = () => {
             <AntDesign name='right' size={24} color='black' />
           </ButtonContainer>
           <Button
-            action={() => router.replace("/(trips)/complete")}
+            action={() => {
+              router.replace("/(trips)/complete");
+              completeTrip();
+            }}
             label='Complete'
             bgColor='#3EA2FF'
             textColor='white'
