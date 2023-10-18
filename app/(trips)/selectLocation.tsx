@@ -26,8 +26,6 @@ const Trips = () => {
     destinationLocation,
   } = useGlobalContext();
 
-  console.log(destinationLocation);
-
   return (
     <View style={{ paddingTop: 20 }} className='px-4 flex-1'>
       <View className='flex-row items-center justify-between'>
