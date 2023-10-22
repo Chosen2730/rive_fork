@@ -1,4 +1,5 @@
 import {
+  ColorValue,
   Text as DefaultText,
   GestureResponderEvent,
   KeyboardTypeOptions,
@@ -80,6 +81,7 @@ export const TextField = ({
       value={val}
       keyboardType={type}
       placeholder={place}
+      placeholderTextColor={dark ? "#8A8A8A" : "#8A8A8A"}
       style={{
         color: dark ? "#8A8A8A" : "#8A8A8A",
         borderWidth: border,
@@ -207,6 +209,7 @@ type TextButtonType = {
   textStyle?: string;
   borderColor?: string;
   action?: (event: GestureResponderEvent) => void;
+  bgColor?: ColorValue;
 };
 
 export const TextButton = ({
@@ -214,6 +217,7 @@ export const TextButton = ({
   styles,
   textColor,
   textStyle,
+  bgColor,
   action,
 }: TextButtonType) => {
   const {
@@ -221,7 +225,10 @@ export const TextButton = ({
   } = useGlobalContext();
   return (
     <TouchableOpacity
-      style={{ borderColor: dark ? "#001C30" : "#F5F5F5" }}
+      style={{
+        borderColor: dark ? "#001C30" : "#F5F5F5",
+        backgroundColor: bgColor ? bgColor : "transaparent",
+      }}
       className={styles}
       onPress={action}
     >

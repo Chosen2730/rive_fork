@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Alert, ColorSchemeName, useColorScheme } from "react-native";
+import { Alert, useColorScheme } from "react-native";
 import {
   DefaultTheme,
   DarkTheme,

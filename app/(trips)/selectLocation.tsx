@@ -1,18 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Container,
-  Text,
-  iconColor,
-  paddingTop,
-  paddingBottom,
-  TextField,
-  Button,
-} from "../../components/Elements";
+import { Container, Text, iconColor, Button } from "../../components/Elements";
 
 import { Image, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import LocationSelector from "../../components/Trips/locationSelector";
 import { useGlobalContext } from "../../AppContext/context";
 import Map from "../../components/Trips/map";
@@ -43,7 +34,7 @@ const Trips = () => {
         />
       </View>
 
-      <Container border={1} styles='flex-row items-center rounded-md mt-4 p-4'>
+      <Container border={1} styles='flex-row items-center rounded-md p-4'>
         {pickupLocation ? (
           <Image source={require("../../assets/images/home/Tags.png")} />
         ) : (

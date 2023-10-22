@@ -1,11 +1,12 @@
 import React from "react";
 import { Tabs } from "expo-router";
+import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import {
-  Feather,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  AntDesign,
-} from "@expo/vector-icons";
+  DeliveryTabIcon,
+  HomeTabIcon,
+  SettingsTabIcon,
+  TripTabIcon,
+} from "../../assets/svg";
 
 const Home = () => {
   return (
@@ -14,40 +15,28 @@ const Home = () => {
         name='index'
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Feather name='home' size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <HomeTabIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name='trips'
         options={{
           title: "Trips",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name='card-travel' size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <TripTabIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name='delivery'
         options={{
           title: "Delivery",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name='truck-fast-outline'
-              size={24}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color }) => <DeliveryTabIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name='settings'
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <AntDesign name='setting' size={24} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <SettingsTabIcon color={color} />,
         }}
       />
     </Tabs>

@@ -67,8 +67,15 @@ const Settings = () => {
           styles='py-4 rounded-md border-b-[1px] '
           textColor='#3EA2FF'
         />
+        <TextButton
+          action={() => router.push("/(settings)/terms")}
+          textStyle=''
+          label='Delete Account'
+          styles='p-4 rounded-md border-b-[1px]'
+          textColor='#FF3E3E'
+          bgColor='#F6D9D9'
+        />
       </View>
-      <Button label='Delete Account' textColor='#FF3E3E' bgColor='#F6D9D9' />
     </SafeAreaView>
   );
 };

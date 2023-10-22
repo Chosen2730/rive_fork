@@ -17,9 +17,13 @@ import {
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useGlobalContext } from "../../AppContext/context";
 
 const EnterPhone = () => {
   const router = useRouter();
+  const {
+    theme: { dark },
+  } = useGlobalContext();
 
   const buttonTexts = [
     {
@@ -53,7 +57,11 @@ const EnterPhone = () => {
         />
         <Text text='Enter Mobile Number' styles='font-medium my-2' md />
         <View className='flex-row space-x-4 mb-4'>
-          <Container styles='p-4 rounded-md' border={1}>
+          <Container
+            color={dark ? "#383838" : "#F7F7F7"}
+            styles='p-4 rounded-md'
+            border={1}
+          >
             <Text text='+234' color='rgb(107 114 128)' />
           </Container>
           <TextField

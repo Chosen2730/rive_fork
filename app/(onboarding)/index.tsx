@@ -4,27 +4,37 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { Text } from "../../components/Elements";
+import { useGlobalContext } from "../../AppContext/context";
 
 const Onboard = ({}) => {
   const router = useRouter();
-
+  const {
+    theme: { dark },
+  } = useGlobalContext();
   const width = Dimensions.get("window").width;
   const height = Dimensions.get("window").height;
   const slider = useRef<ICarouselInstance>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+
   const pages = [
     {
-      img: require("../../assets/images/onboarding/1.png"),
+      img: dark
+        ? require(`../../assets/images/onboarding/1-dark.png`)
+        : require(`../../assets/images/onboarding/1.png`),
       header: "More Than Luxury",
       content: "Elevating Luxury Transportation Beyond Expectations.",
     },
     {
-      img: require("../../assets/images/onboarding/2.png"),
+      img: dark
+        ? require(`../../assets/images/onboarding/2-dark.png`)
+        : require(`../../assets/images/onboarding/2.png`),
       header: "Exclusive Rewards",
       content: "benefits that elevate your experience even further",
     },
     {
-      img: require("../../assets/images/onboarding/3.png"),
+      img: dark
+        ? require(`../../assets/images/onboarding/3-dark.png`)
+        : require(`../../assets/images/onboarding/3.png`),
       header: "Advanced Safety",
       content: "state-of-the-art safety features and real-time monitoring",
     },
@@ -62,7 +72,7 @@ const Onboard = ({}) => {
                 </View>
               </View>
               <View className='items-center flex-1 justify-center w-full'>
-                <Image style={styles.image} className={``} source={item.img} />
+                <Image style={styles.image} source={item.img} />
                 <Text text={item.header} lg bold />
 
                 <Text styles='text-center my-3' text={item.content} />
@@ -93,8 +103,8 @@ const styles = StyleSheet.create({
     paddingTop: 50,
   },
   image: {
-    width: 0.9 * Dimensions.get("window").width,
-    height: 0.9 * Dimensions.get("window").width,
+    width: 1 * Dimensions.get("window").width,
+    height: 1 * Dimensions.get("window").width,
     resizeMode: "contain",
   },
 });
