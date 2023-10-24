@@ -7,16 +7,16 @@ import {
   iconColor,
   paddingTop,
   paddingBottom,
-} from "../../components/Elements";
+} from "../components/Elements";
 
 import { Image, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import NoRives from "../../components/Home/noRives";
-import TripList from "../../components/Trips/triplist";
-import { TripType } from "../../types";
-import { currentTrips } from "../(trips)/pastTrips";
-import DeliveryList from "../../components/delivery/deliveryList";
+import NoRives from "../components/Home/noRives";
+import TripList from "../components/Trips/triplist";
+import { TripType } from "../types";
+import { currentTrips } from "../app/(trips)/pastTrips";
+import DeliveryList from "../components/delivery/deliveryList";
 
 const Delivery = () => {
   const router = useRouter();

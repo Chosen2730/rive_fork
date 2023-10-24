@@ -61,6 +61,7 @@ type TextFieldType = {
   border?: number;
   type?: KeyboardTypeOptions;
   place?: string;
+  editable?: boolean;
 };
 
 export const TextField = ({
@@ -71,6 +72,7 @@ export const TextField = ({
   styles,
   type,
   place,
+  editable,
 }: TextFieldType) => {
   const {
     theme: { dark },
@@ -81,6 +83,7 @@ export const TextField = ({
       value={val}
       keyboardType={type}
       placeholder={place}
+      editable={editable}
       placeholderTextColor={dark ? "#8A8A8A" : "#8A8A8A"}
       style={{
         color: dark ? "#8A8A8A" : "#8A8A8A",

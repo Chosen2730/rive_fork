@@ -1,12 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Container,
   Text,
   iconColor,
   paddingTop,
   paddingBottom,
+  TextButton,
 } from "../../components/Elements";
 
 import { Image, View } from "react-native";
@@ -15,12 +16,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import CurrentMap from "../../components/Trips/currentLocationMap";
 import { useGlobalContext } from "../../AppContext/context";
 
-const Trips = () => {
+const Trips2 = () => {
   const router = useRouter();
-  const { location } = useGlobalContext();
-
-  // console.log(location);
-
+  const { location, setUseLocation, setPickupLocation } = useGlobalContext();
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='flex-1'>
       <View className='flex-row items-center justify-between mt-10 mb-5 px-4'>
@@ -44,30 +42,43 @@ const Trips = () => {
         <Text
           md
           bold
-          text='Where would you like to go today?'
+          text='Where would you like to be Picked?'
           styles='mt-2 w-[200px]'
         />
 
-        <TouchableOpacity
-          onPress={() => router.push("/(trips)/selectDestination")}
-          className='mb-5'
-        >
-          <Container
-            border={1}
-            styles='flex-row items-center pl-4 justify-between rounded-md mt-4'
+        <View className='mb-5'>
+          <TouchableOpacity
+            onPress={() => {
+              setUseLocation(false);
+              router.push("/(trips)/selectLocation");
+            }}
           >
-            <Text color='#8A8A8A' text='Choose Location' />
-            <Container color='#3EA2FF' border={1} styles='p-4 border-0'>
-              <Image
-                className=''
-                source={require("../../assets/images/home/gps2.png")}
-              />
+            <Container
+              border={1}
+              styles='flex-row items-center pl-4 justify-between rounded-md mt-4'
+            >
+              <Text color='#8A8A8A' text='Choose Location' />
+              <Container border={1} color='#3EA2FF' styles='p-4 border-0'>
+                <Image
+                  className=''
+                  source={require("../../assets/images/home/gps2.png")}
+                />
+              </Container>
             </Container>
-          </Container>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          <TextButton
+            action={() => {
+              setUseLocation(true);
+              router.push("/(trips)/selectLocation");
+            }}
+            styles='my-3'
+            textColor='#7A7A7A'
+            label='Use Current Location'
+          />
+        </View>
       </Container>
     </SafeAreaView>
   );
 };
 
-export default Trips;
+export default Trips2;

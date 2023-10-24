@@ -38,7 +38,6 @@ const Welcome = () => {
       link: "/(trips)/newTrip",
       title: "Quick Rive",
     },
-    // router.push('/(home)/delivery')
     {
       img: require("../../assets/images/home/truck-fast.png"),
       link: "/(home)/delivery",
@@ -87,27 +86,15 @@ const Welcome = () => {
   const { getUserLocation } = useGlobalContext();
 
   useEffect(() => {
-    // getUserLocation();
+    getUserLocation();
   }, []);
 
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
-      <View className='flex-row items-center justify-between'>
-        <Ionicons
-          onPress={() => router.back()}
-          name='chevron-back-outline'
-          size={24}
-          color={iconColor()}
-        />
-        <Text text='Home' sm bold />
-        <Image
-          className='w-[24px] h-[24px ]'
-          resizeMode='contain'
-          source={require("../../assets/images/home/Button.png")}
-        />
+      <View className='flex-row items-center justify-between mt-10'>
+        <Text text='Home' bold md styles='mb-4' />
       </View>
-      <View className='bg-primary p-8 rounded-md relative mt- overflow-hidden'>
-        <Text color='white' text='Hello Emmanuel!' />
+      <View className='bg-primary p-8 py-12 rounded-md relative mt- overflow-hidden'>
         <Text
           color='white'
           md
@@ -122,18 +109,24 @@ const Welcome = () => {
         />
       </View>
       <View className='flex-row justify-between mt-4'>
-        {topNav.map(({ img, link, title }, ind) => (
-          <TouchableOpacity onPress={() => router.push(link)} key={ind}>
-            <Container border={1} styles='p-7 rounded-md'>
-              <Image
-                className='w-[24px] h-[24px] mx-auto'
-                resizeMode='contain'
-                source={img}
-              />
-            </Container>
-            <Text text={title} color='#7A7A7A' styles='text-center mt-2' />
-          </TouchableOpacity>
-        ))}
+        <Container
+          styles='flex-row justify-between items-center flex-1 p-4 rounded-md'
+          border={1}
+        >
+          <View className='flex-row items-center'>
+            <Image source={require("../../assets/images/home/user.png")} />
+            <View>
+              <Text text='Emmanuel John' bold />
+              <Text text='Welcome to Rive' styles='mt-1' color='#7A7A7A' />
+            </View>
+          </View>
+          <Button
+            action={() => router.push("/(trips)/newTrip")}
+            label='Take a Ride'
+            bgColor='#3EA2FF'
+            textColor='#fff'
+          />
+        </Container>
       </View>
       <ScrollView className='flex-1 mt-5' showsVerticalScrollIndicator={false}>
         {rives?.length < 1 ? <NoRives /> : <RiveList rives={rives} />}

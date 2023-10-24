@@ -26,6 +26,8 @@ export type AppContextType = {
   location: any;
   getUserLocation: Function;
   completeTrip: Function;
+  useLocation: boolean;
+  setUseLocation: Dispatch<boolean>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -44,6 +46,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [pickupLocation, setPickupLocation] = useState<any>(null);
   const [destinationLocation, setDestinationLocation] = useState<any>(null);
   const [location, setLocation] = useState<any>(null);
+  const [useLocation, setUseLocation] = useState(false);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -60,8 +63,29 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
     let currentLocation = await Location.getCurrentPositionAsync({});
     const { latitude, longitude } = currentLocation.coords;
-    const location = { latitude, longitude };
-    setLocation(location);
+    try {
+      const loc = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+
+      if (loc.length > 0) {
+        const firstLocation = loc[0];
+        // console.log(firstLocation);
+        const description = `${firstLocation.name}, ${firstLocation.city},`;
+        const userLocation = {
+          lng: longitude,
+          lat: latitude,
+          desc: description,
+        };
+        setLocation(userLocation);
+      } else {
+        return "Location not found";
+      }
+    } catch (error) {
+      console.error("Error getting location description:", error);
+      return "Error getting location description";
+    }
   };
 
   const completeTrip = () => {
@@ -78,7 +102,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [colorScheme]);
 
-  // console.log(MAPS_KEY);
+  useEffect(() => {
+    if (useLocation) {
+      setPickupLocation(location);
+    }
+    {
+      setPickupLocation(null);
+    }
+  }, [useLocation]);
+
+  // console.log(location);
 
   return (
     <AppContext.Provider
@@ -93,6 +126,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         location,
         getUserLocation,
         completeTrip,
+        useLocation,
+        setUseLocation,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>

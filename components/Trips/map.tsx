@@ -5,19 +5,32 @@ import { useGlobalContext } from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
 
 const Map = () => {
-  const { pickupLocation, destinationLocation, MAPS_KEY } = useGlobalContext();
+  const {
+    pickupLocation,
+    destinationLocation,
+    MAPS_KEY,
+    useLocation,
+    location,
+  } = useGlobalContext();
   const mapRef = useRef<MapView | null>(null);
 
   useEffect(() => {
-    if (pickupLocation && destinationLocation) {
-      if (mapRef.current !== null) {
-        // Check mapRef.current
-        mapRef.current.fitToSuppliedMarkers(["origin", "destination"], {
-          edgePadding: { bottom: 50, left: 50, right: 50, top: 50 },
-        });
+    if (mapRef.current !== null) {
+      const markersToFit = ["destination"];
+      if (pickupLocation) {
+        markersToFit.push("origin");
       }
+      if (location) {
+        markersToFit.push("location");
+      }
+
+      mapRef.current.fitToSuppliedMarkers(markersToFit, {
+        edgePadding: { bottom: 50, left: 50, right: 50, top: 50 },
+      });
     }
-  }, [pickupLocation, destinationLocation]);
+  }, [pickupLocation, destinationLocation, location, useLocation]);
+
+  console.log({ pickupLocation, destinationLocation, location, useLocation });
 
   return (
     <View style={{ flex: 1 }}>
@@ -25,8 +38,8 @@ const Map = () => {
         ref={mapRef}
         mapType='mutedStandard'
         region={{
-          latitude: pickupLocation.lat,
-          longitude: pickupLocation.lng,
+          latitude: destinationLocation?.lat,
+          longitude: destinationLocation?.lng,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
@@ -34,8 +47,18 @@ const Map = () => {
       >
         {destinationLocation && pickupLocation && (
           <MapViewDirections
-            origin={pickupLocation.desc}
-            destination={destinationLocation.desc}
+            origin={
+              pickupLocation
+                ? {
+                    longitude: pickupLocation.lng,
+                    latitude: pickupLocation.lat,
+                  }
+                : location
+            }
+            destination={{
+              longitude: destinationLocation.lng,
+              latitude: destinationLocation.lat,
+            }}
             apikey={MAPS_KEY}
             strokeColor='red'
             strokeWidth={3}
@@ -48,6 +71,7 @@ const Map = () => {
               latitude: pickupLocation.lat,
             }}
             description={pickupLocation.desc}
+            title={"Pickup location"}
             identifier='origin'
           />
         )}
@@ -58,7 +82,19 @@ const Map = () => {
               latitude: destinationLocation.lat,
             }}
             description={destinationLocation.desc}
+            title={"Pickup Destination"}
             identifier='destination'
+          />
+        )}
+        {useLocation && location && (
+          <Marker
+            coordinate={{
+              longitude: location.lng,
+              latitude: location.lat,
+            }}
+            description={location.desc}
+            title={"Your Location"}
+            identifier='location'
           />
         )}
       </MapView>

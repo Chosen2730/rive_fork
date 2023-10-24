@@ -25,7 +25,7 @@ const EnterOTP = () => {
 
       <OTPInput setOtpInput={setOtpInput} otpInput={otpInput} />
       <Button
-        action={() => router.push("/(onboarding)/enterEmail")}
+        action={() => router.push("/(onboarding)/enterName")}
         label='Continue'
         bgColor='#3EA2FF'
         textColor='white'

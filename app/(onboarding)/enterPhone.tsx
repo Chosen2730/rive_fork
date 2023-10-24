@@ -38,12 +38,12 @@ const EnterPhone = () => {
       icon: <AntDesign name='google' size={24} color='black' />,
       label: "Google",
     },
-    {
-      icon: (
-        <MaterialCommunityIcons name='email-outline' size={24} color='black' />
-      ),
-      label: "Email",
-    },
+    // {
+    //   icon: (
+    //     <MaterialCommunityIcons name='email-outline' size={24} color='black' />
+    //   ),
+    //   label: "Email",
+    // },
   ];
 
   return (
@@ -55,21 +55,13 @@ const EnterPhone = () => {
           size={24}
           color={iconColor()}
         />
-        <Text text='Enter Mobile Number' styles='font-medium my-2' md />
-        <View className='flex-row space-x-4 mb-4'>
-          <Container
-            color={dark ? "#383838" : "#F7F7F7"}
-            styles='p-4 rounded-md'
-            border={1}
-          >
-            <Text text='+234' color='rgb(107 114 128)' />
-          </Container>
-          <TextField
-            type='phone-pad'
-            border={1}
-            styles='flex-1 ml-2 rounded-md px-4'
-          />
-        </View>
+        <Text text='Enter Email' styles='font-medium my-6' md />
+        <TextField
+          border={1}
+          type='email-address'
+          styles='p-3 rounded-md mb-4'
+          place='user@example.com'
+        />
         <Button
           action={() => router.push("/(onboarding)/enterOTP")}
           label='Continue'

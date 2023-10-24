@@ -41,6 +41,7 @@ const LocationSelector = ({
         query={{
           key: MAPS_KEY,
           language: "en",
+          components: "country:NG",
         }}
       />
     </View>
