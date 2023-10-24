@@ -134,3 +134,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     </AppContext.Provider>
   );
 };
+//  "env": {
+//         "GOOGLE_MAPS_API_KEY": "AIzaSyCl1oUl9lV20uNfJr2Z7gnczW8WY5s0IDo"
+//       }
