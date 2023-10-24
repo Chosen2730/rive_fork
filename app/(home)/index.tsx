@@ -24,37 +24,8 @@ export type RiveType = {
   status: string;
 };
 
-type NavType = {
-  img: any;
-  link: any;
-  title: string;
-};
-
 const Welcome = () => {
   const router = useRouter();
-  const topNav: NavType[] = [
-    {
-      img: require("../../assets/images/home/smart-car.png"),
-      link: "/(trips)/newTrip",
-      title: "Quick Rive",
-    },
-    {
-      img: require("../../assets/images/home/truck-fast.png"),
-      link: "/(home)/delivery",
-      title: "Deliver Rive",
-    },
-    {
-      img: require("../../assets/images/home/award.png"),
-      link: "/(home)",
-      title: "Recieve Rive",
-    },
-    {
-      img: require("../../assets/images/home/award.png"),
-      link: "/(home)",
-      title: "Rewards",
-    },
-  ];
-
   const currentRives: RiveType[] = [
     {
       amount: 4900,
