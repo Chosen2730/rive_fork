@@ -4,7 +4,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useGlobalContext } from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
 
-const Map = () => {
+const TrackMap = () => {
   const {
     pickupLocation,
     destinationLocation,
@@ -101,4 +101,4 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default TrackMap;

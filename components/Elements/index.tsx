@@ -30,11 +30,21 @@ type TextType = {
   md?: any;
   sm?: any;
   lg?: any;
+  xs?: any;
   bold?: any;
   color?: string;
 };
 
-export const Text = ({ text, styles, md, sm, lg, bold, color }: TextType) => {
+export const Text = ({
+  text,
+  styles,
+  md,
+  xs,
+  sm,
+  lg,
+  bold,
+  color,
+}: TextType) => {
   const {
     theme: { dark },
   } = useGlobalContext();
@@ -44,7 +54,7 @@ export const Text = ({ text, styles, md, sm, lg, bold, color }: TextType) => {
       className={styles}
       style={{
         color: textColor,
-        fontSize: sm ? 16 : md ? 20 : lg ? 32 : 14,
+        fontSize: sm ? 16 : md ? 20 : lg ? 32 : xs ? 12 : 14,
         fontWeight: bold ? "bold" : "normal",
       }}
     >

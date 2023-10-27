@@ -27,11 +27,12 @@ const PackageDetails = () => {
       vehicle: require("../../assets/images/home/Car.png"),
       name: "Ford escape 6GK2C14",
       price: "5000",
+      recommeded: true,
     },
     {
       vehicle: require("../../assets/images/home/Objects.png"),
       name: "Ford escape 6GK2C14",
-      price: "5000",
+      price: "2500",
     },
   ];
   const extraPad = Platform.OS !== "ios" ? paddingTop + 20 : paddingTop;
@@ -52,45 +53,43 @@ const PackageDetails = () => {
         <FlatList
           className=''
           data={transportOptions}
-          renderItem={({ item: { vehicle }, index }) => (
+          renderItem={({ item: { vehicle, recommeded, price }, index }) => (
             <TouchableOpacity
               onPress={() => setSelectedRideIndex(index)}
-              className={`p-4 py-10 items-center h-[180px] ${
-                selectedRideIndex === index && "border border-[#65B4FD]"
-              } rounded-md`}
+              className={`p-4 py-10 items-center ${
+                selectedRideIndex === index
+                  ? "border-[#65B4FD]"
+                  : "border-gray-300"
+              }  border rounded-md mb-4`}
             >
               <Image
-                className='w-[250px] h-full'
+                className='w-[250px]'
                 resizeMode='contain'
                 source={vehicle}
               />
+              <View className='p-6 flex-row w-full items-center'>
+                <View className='flex-1'>
+                  <Text text={`₦${price}`} bold />
+                  <Text text='Economy' xs color='#7A7A7A' />
+                </View>
+                {recommeded && (
+                  <View className='bg-[#D9E8F6]  px-6 py-3 rounded-full'>
+                    <Text text='Recommended' color='black' styles='' />
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
           )}
         />
-        <View className='mt-2'>
-          <Container styles='p-6' border={1}>
-            <Text text='₦5000' bold />
-            <Text text='Transportation' styles='my-1' color='#7A7A7A' />
-            <Text text='Ford escape 6GK2C14' color='#7A7A7A' />
-          </Container>
-          <ButtonContainer
-            action={() => router.replace("/(trips)/paymentMethod")}
-            bgColor='#D9E8F6'
-            styles='flex-row justify-between border-2 border-gray-200 my-4'
-          >
-            <Text color='black' text='Choose Payment Method' />
-            <AntDesign name='right' size={24} color='black' />
-          </ButtonContainer>
-          <Button
-            action={() => {
-              router.replace("/(trips)/complete");
-              completeTrip();
-            }}
-            label='Complete'
-            bgColor='#3EA2FF'
-            textColor='white'
-          />
-        </View>
+
+        <Button
+          action={() => {
+            router.replace("/(trips)/pickupSummary");
+          }}
+          label='Confirm Ride'
+          bgColor='#3EA2FF'
+          textColor='white'
+        />
       </View>
     </SafeAreaView>
   );

@@ -11,7 +11,8 @@ const LocationSelector = ({
   setLocationDetails,
   place,
 }: LocationSelectorType) => {
-  const { MAPS_KEY } = useGlobalContext();
+  const { MAPS_KEY2 } = useGlobalContext();
+  // console.log(MAPS_KEY2);
   return (
     <View>
       <GooglePlacesAutocomplete
@@ -39,7 +40,7 @@ const LocationSelector = ({
         }}
         fetchDetails={true}
         query={{
-          key: MAPS_KEY,
+          key: MAPS_KEY2,
           language: "en",
           components: "country:NG",
         }}

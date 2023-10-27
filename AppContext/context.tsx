@@ -13,7 +13,18 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { GOOGLE_MAPS_API_KEY as MAPS_KEY } from "@env";
+// @ts-ignore
+import { MAPS_API_KEY as MAPS_KEY2 } from "@env";
 import * as Location from "expo-location";
+import axios from "axios";
+
+type TripDetailsType = {
+  distance: {
+    text: string;
+    value: number;
+  };
+  duration: string;
+};
 
 export type AppContextType = {
   theme: typeof DefaultTheme | typeof DarkTheme;
@@ -28,6 +39,9 @@ export type AppContextType = {
   completeTrip: Function;
   useLocation: boolean;
   setUseLocation: Dispatch<boolean>;
+  MAPS_KEY2: string;
+  getDistance: Function;
+  tripDetails: TripDetailsType | null;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -47,6 +61,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [destinationLocation, setDestinationLocation] = useState<any>(null);
   const [location, setLocation] = useState<any>(null);
   const [useLocation, setUseLocation] = useState(false);
+  const [tripDetails, setTripDetails] = useState<TripDetailsType | null>(null);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -93,6 +108,40 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setPickupLocation(null);
   };
 
+  const getDistance = async () => {
+    // console.log(pickupLocation, destinationLocation);
+    const { lat: lat1, lng: lng1 } = pickupLocation;
+    const { lat: lat2, lng: lng2 } = destinationLocation;
+    const origins = `${lat1},${lng1}`;
+    const destinations = `${lat2},${lng2}`;
+    const API_ENDPOINT =
+      "https://maps.googleapis.com/maps/api/distancematrix/json";
+    try {
+      const response = await axios.get(API_ENDPOINT, {
+        params: {
+          origins,
+          destinations,
+          key: MAPS_KEY2,
+        },
+      });
+
+      if (response.data.status === "OK") {
+        const distanceRes = response.data.rows[0].elements[0].distance;
+        const text = distanceRes.text;
+        const value: number = distanceRes.value;
+        const duration: string =
+          response.data.rows[0].elements[0].duration.text;
+        const distance = { text, value };
+        setTripDetails({ distance, duration });
+      } else {
+        throw new Error("Distance Matrix API request failed");
+      }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      throw error;
+    }
+  };
+
   // USEEFFECTS
   useEffect(() => {
     if (colorScheme === "dark") {
@@ -106,12 +155,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     if (useLocation) {
       setPickupLocation(location);
     }
-    {
-      setPickupLocation(null);
-    }
   }, [useLocation]);
 
-  // console.log(location);
+  // console.log({ MAPS_KEY2, MAPS_KEY });
 
   return (
     <AppContext.Provider
@@ -128,6 +174,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         completeTrip,
         useLocation,
         setUseLocation,
+        MAPS_KEY2,
+        getDistance,
+        tripDetails,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>

@@ -1,13 +1,15 @@
 import { View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const CurrentMap = ({ location }: any) => {
   const mapRef = useRef<MapView | null>(null);
-  const [currentLocation, setCurrentLocation] = useState({
-    lat: 7.2245,
-    lng: 3.9115,
-  });
+  const [currentLocation, setCurrentLocation] = useState(
+    location || {
+      lat: 7.2245,
+      lng: 3.9115,
+    }
+  );
 
   useEffect(() => {
     if (mapRef.current && location) {
@@ -26,15 +28,15 @@ const CurrentMap = ({ location }: any) => {
   return (
     <View style={{ flex: 1 }}>
       <MapView
+        provider={PROVIDER_GOOGLE}
         ref={mapRef}
-        mapType='mutedStandard'
         region={{
           latitude: lat,
           longitude: lng,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
         }}
-        style={{ flex: 1, backgroundColor: "black" }}
+        style={{ width: "100%", height: "100%" }}
       >
         {location && (
           <Marker

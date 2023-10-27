@@ -32,6 +32,7 @@ const PaymentMethod = () => {
         {paymentMethods.map((paymentMethod, ind) => (
           <TextButton
             key={ind}
+            action={() => router.push("/(trips)/complete")}
             textStyle=''
             label={paymentMethod}
             styles='py-4 rounded-md border-b-[1px] '

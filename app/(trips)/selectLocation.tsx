@@ -23,6 +23,7 @@ const Trips = () => {
     pickupLocation,
     location,
     theme: { dark },
+    getDistance,
   } = useGlobalContext();
 
   return (
@@ -90,7 +91,10 @@ const Trips = () => {
 
       <Button
         isDisabled={destinationLocation === null && true}
-        action={() => router.push("/(trips)/packageDetails")}
+        action={() => {
+          getDistance();
+          router.push("/(trips)/packageDetails");
+        }}
         label='Confirm'
         bgColor='#3EA2FF'
         textColor='white'

@@ -28,14 +28,14 @@ const Onboard = ({}) => {
       img: dark
         ? require(`../../assets/images/onboarding/2-dark.png`)
         : require(`../../assets/images/onboarding/2.png`),
-      header: "Exclusive Rewards",
+      header: "Exclusive Rewards.",
       content: "benefits that elevate your experience even further",
     },
     {
       img: dark
         ? require(`../../assets/images/onboarding/3-dark.png`)
         : require(`../../assets/images/onboarding/3.png`),
-      header: "Advanced Safety",
+      header: "Advanced Safety.",
       content: "state-of-the-art safety features and real-time monitoring",
     },
   ];
