@@ -5,11 +5,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import { SplashScreen, Stack, router } from "expo-router";
+import { useEffect, useState } from "react";
 import { useColorScheme } from "react-native";
 import { AppProvider, useGlobalContext } from "../AppContext/context";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,6 +51,30 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [token, setToken] = useState<string>("");
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+      if (value !== null) {
+        setToken(value);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
+
+  useEffect(() => {
+    if (token.length > 1) {
+      router.replace("/(home)/");
+      return;
+    } else {
+      router.replace("/(onboarding)/login");
+    }
+  }, [token]);
 
   return (
     <AppProvider>

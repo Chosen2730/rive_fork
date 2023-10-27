@@ -19,6 +19,7 @@ import * as Location from "expo-location";
 import axios from "axios";
 import { baseURL, config } from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 type TripDetailsType = {
   distance: {
@@ -34,6 +35,15 @@ type UserDetailsType = {
   email?: string;
   tel?: string;
   paymentMethod?: string;
+};
+
+type RideType = {
+  category?: string;
+  price?: number;
+  features?: string;
+  type?: string;
+  isRecommended?: boolean;
+  _id: string;
 };
 
 export type AppContextType = {
@@ -60,6 +70,11 @@ export type AppContextType = {
   setIsLoading: Dispatch<boolean>;
   getUserDetails: Function;
   getSavedUser: Function;
+  rides: RideType[];
+  getRides: Function;
+  tripPrice: number;
+  getTripPrice: Function;
+  setChosenRide: Dispatch<RideType | null>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -83,6 +98,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [userInput, setUserInput] = useState<UserDetailsType | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [rides, setRides] = useState<RideType[] | []>([]);
+  const [tripPrice, setTripPrice] = useState<number>(0);
+  const [chosenRide, setChosenRide] = useState<RideType | null>(null);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -178,6 +196,40 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getRides = async () => {
+    const url = `${baseURL}/rides`;
+    setIsLoading(true);
+    try {
+      const res = await axios.get(url, await config());
+      setRides(res.data.rides);
+    } catch (error: any) {
+      console.log(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getTripPrice = async () => {
+    const url = `${baseURL}/multiplier/getTripPrice`;
+    setIsLoading(true);
+    const payload = {
+      distance: tripDetails?.distance.value,
+      ride: chosenRide?._id,
+    };
+    console.log(payload);
+    try {
+      const res = await axios.post(url, payload, await config());
+      console.log(res.data);
+      setTripPrice(res.data.tripPrice);
+      router.replace("/(trips)/pickupSummary");
+    } catch (error: any) {
+      console.log({ error });
+      console.log(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getSavedUser = async () => {
     try {
       const data = await AsyncStorage.getItem("user");
@@ -230,6 +282,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         userDetails,
         getUserDetails,
         getSavedUser,
+        rides,
+        getRides,
+        tripPrice,
+        setChosenRide,
+        getTripPrice,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>
