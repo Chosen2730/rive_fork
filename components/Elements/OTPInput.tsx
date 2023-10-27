@@ -9,14 +9,11 @@ import { useGlobalContext } from "../../AppContext/context";
 type OTPType = {
   otpInput: string;
   setOtpInput: Dispatch<SetStateAction<string>>;
+  input: any;
 };
 
-const OTPInput = ({ otpInput, setOtpInput }: OTPType) => {
-  const router = useRouter();
-  const input = useRef<OTPTextView>(null);
-
+const OTPInput = ({ input, setOtpInput }: OTPType) => {
   // const [otpInput, setOtpInput] = useState<string>("");
-  // const clear = () => input.current?.clear();
   // const updateOtpText = () => input.current?.setValue(otpInput);
   // const showTextAlert = () => otpInput && Alert.alert(otpInput);
 
@@ -51,6 +48,7 @@ const OTPInput = ({ otpInput, setOtpInput }: OTPType) => {
       keyboardType='numeric'
       tintColor={dark ? "#0F0F0F" : "#3EA2FF"}
       offTintColor={dark ? "#0F0F0F" : "#D0D0D0"}
+      autoFocus={true}
     />
   );
 };

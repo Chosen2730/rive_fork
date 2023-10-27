@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Ionicons,
   AntDesign,
@@ -13,17 +13,24 @@ import {
   TextButton,
   TextField,
   iconColor,
+  showAlert,
 } from "../../components/Elements";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../AppContext/context";
+import { baseURL } from "../../api";
+import Toast from "react-native-toast-message";
+import axios from "axios";
 
 const EnterPhone = () => {
   const router = useRouter();
   const {
     theme: { dark },
+    userInput,
+    setUserInput,
   } = useGlobalContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const buttonTexts = [
     {
@@ -46,6 +53,39 @@ const EnterPhone = () => {
     // },
   ];
 
+  const login = async () => {
+    const url = `${baseURL}/auth/login`;
+    if (!userInput?.email) {
+      showAlert({
+        message: "Please enter your email address",
+        title: "Ooops",
+        type: "error",
+      });
+
+      return;
+    }
+    setIsLoading(true);
+    const email = userInput?.email?.toLowerCase();
+    try {
+      const res = await axios.post(url, { email });
+      console.log(res.data.msg);
+      router.push("/(onboarding)/enterOTP");
+      showAlert({
+        message: res.data.msg,
+        title: "Login Successful",
+        type: "success",
+      });
+    } catch (error: any) {
+      showAlert({
+        message: `${error?.response?.data.msg || "An error occurred"}`,
+        title: "Oops!",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView className='p-4'>
       <ScrollView>
@@ -58,12 +98,15 @@ const EnterPhone = () => {
         <Text text='Enter Email' styles='font-medium my-6' md />
         <TextField
           border={1}
+          val={userInput?.email || ""}
+          onChange={(val) => setUserInput({ ...userInput, email: val })}
           type='email-address'
           styles='p-3 rounded-md mb-4'
           place='user@example.com'
         />
         <Button
-          action={() => router.push("/(onboarding)/enterOTP")}
+          action={login}
+          loadingState={isLoading}
           label='Continue'
           bgColor='#3EA2FF'
           textColor='white'
@@ -103,7 +146,8 @@ const EnterPhone = () => {
         <TextButton
           textStyle='text-center'
           textColor='#3EA2FF'
-          label='Login to your account'
+          label='Create your account'
+          action={() => router.push("/enterEmail")}
         />
         <Text
           text='By continuing, you agree to receive calls, WhatsApp, or SMS messages, from Rive and its affiliates at the provided number.'

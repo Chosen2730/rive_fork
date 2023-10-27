@@ -41,7 +41,7 @@ const Onboard = ({}) => {
   ];
 
   const nextSlide = () => {
-    router.push("/(onboarding)/enterPhone");
+    router.push("/(onboarding)/enterEmail");
   };
 
   return (

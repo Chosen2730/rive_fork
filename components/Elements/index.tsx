@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ColorValue,
   Text as DefaultText,
   GestureResponderEvent,
@@ -11,6 +12,7 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../AppContext/context";
+import Toast from "react-native-toast-message";
 export const iconColor = (color?: string | OpaqueColorValue | undefined) => {
   const {
     theme: { dark },
@@ -149,6 +151,7 @@ type ButtonType = {
   action?: (event: GestureResponderEvent) => void;
   styles?: string;
   isDisabled?: boolean;
+  loadingState?: boolean;
 };
 
 export const Button = ({
@@ -158,6 +161,7 @@ export const Button = ({
   action,
   styles,
   isDisabled,
+  loadingState,
 }: ButtonType) => {
   const {
     theme: { dark },
@@ -165,7 +169,7 @@ export const Button = ({
   return (
     <TouchableOpacity
       onPress={action}
-      disabled={isDisabled}
+      disabled={isDisabled || loadingState}
       style={{
         backgroundColor: isDisabled
           ? "#D0D0D0"
@@ -177,11 +181,15 @@ export const Button = ({
       }}
       className={`${styles} p-4 rounded-md`}
     >
-      <Text
-        text={label}
-        color={isDisabled ? "#8A8A8A" : textColor}
-        styles='text-center'
-      />
+      {loadingState ? (
+        <ActivityIndicator color={"#ECF9FF"} />
+      ) : (
+        <Text
+          text={label}
+          color={isDisabled ? "#8A8A8A" : textColor}
+          styles='text-center'
+        />
+      )}
     </TouchableOpacity>
   );
 };
@@ -248,6 +256,23 @@ export const TextButton = ({
       <Text text={label} color={textColor} styles={textStyle} />
     </TouchableOpacity>
   );
+};
+
+export const showAlert = ({
+  type,
+  title,
+  message,
+}: {
+  type: string;
+  title: string;
+  message: string;
+}) => {
+  return Toast.show({
+    text1: title,
+    text2: message,
+    type: type,
+    position: "top",
+  });
 };
 
 export const paddingTop: any = Platform.OS === "ios" ? -30 : -20;

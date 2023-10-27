@@ -17,6 +17,8 @@ import { GOOGLE_MAPS_API_KEY as MAPS_KEY } from "@env";
 import { MAPS_API_KEY as MAPS_KEY2 } from "@env";
 import * as Location from "expo-location";
 import axios from "axios";
+import { baseURL, config } from "../api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type TripDetailsType = {
   distance: {
@@ -24,6 +26,14 @@ type TripDetailsType = {
     value: number;
   };
   duration: string;
+};
+
+type UserDetailsType = {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  tel?: string;
+  paymentMethod?: string;
 };
 
 export type AppContextType = {
@@ -42,6 +52,14 @@ export type AppContextType = {
   MAPS_KEY2: string;
   getDistance: Function;
   tripDetails: TripDetailsType | null;
+  userInput: UserDetailsType | null;
+  userDetails: UserDetailsType | null;
+  setUserInput: Dispatch<UserDetailsType | null>;
+  setUserDetails?: Dispatch<UserDetailsType | null>;
+  isLoading: boolean;
+  setIsLoading: Dispatch<boolean>;
+  getUserDetails: Function;
+  getSavedUser: Function;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -62,6 +80,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [location, setLocation] = useState<any>(null);
   const [useLocation, setUseLocation] = useState(false);
   const [tripDetails, setTripDetails] = useState<TripDetailsType | null>(null);
+  const [userInput, setUserInput] = useState<UserDetailsType | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -142,6 +163,31 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getUserDetails = async () => {
+    const email = userInput?.email?.toLocaleLowerCase();
+    const url = `${baseURL}/auth/user/${email}`;
+    setIsLoading(true);
+    try {
+      const res = await axios.get(url, await config());
+      const data = JSON.stringify(res.data.user);
+      await AsyncStorage.setItem("user", data);
+    } catch (error: any) {
+      console.log(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getSavedUser = async () => {
+    try {
+      const data = await AsyncStorage.getItem("user");
+      const currentUser = data != null ? JSON.parse(data) : null;
+      setUserDetails(currentUser);
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   // USEEFFECTS
   useEffect(() => {
     if (colorScheme === "dark") {
@@ -177,12 +223,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         MAPS_KEY2,
         getDistance,
         tripDetails,
+        userInput,
+        setUserInput,
+        isLoading,
+        setIsLoading,
+        userDetails,
+        getUserDetails,
+        getSavedUser,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>
     </AppContext.Provider>
   );
 };
-//  "env": {
-//         "GOOGLE_MAPS_API_KEY": "AIzaSyCl1oUl9lV20uNfJr2Z7gnczW8WY5s0IDo"
-//       }
+
+// eas build --profile preview --platform android

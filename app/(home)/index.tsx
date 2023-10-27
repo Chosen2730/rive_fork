@@ -54,10 +54,15 @@ const Welcome = () => {
   ];
 
   const [rives, setRives] = useState<RiveType[]>(currentRives);
-  const { getUserLocation } = useGlobalContext();
+  const { getUserLocation, getSavedUser, userDetails } = useGlobalContext();
+
+  const getUser = async () => {
+    await getSavedUser();
+  };
 
   useEffect(() => {
     getUserLocation();
+    getUser();
   }, []);
 
   return (
@@ -87,7 +92,11 @@ const Welcome = () => {
           <View className='flex-row items-center'>
             <Image source={require("../../assets/images/home/user.png")} />
             <View>
-              <Text text='Emmanuel John' bold />
+              <Text
+                text={`${userDetails?.firstName} ${userDetails?.lastName}`}
+                styles='capitalize'
+                bold
+              />
               <Text text='Welcome to Rive' styles='mt-1' color='#7A7A7A' />
             </View>
           </View>

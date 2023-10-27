@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -7,10 +7,13 @@ import {
   Text,
   TextField,
   iconColor,
+  showAlert,
 } from "../../components/Elements";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { useGlobalContext } from "../../AppContext/context";
+import { baseURL, config } from "../../api";
+import axios from "axios";
 ("react-native-gesture-handler");
 
 const EnterName = () => {
@@ -18,6 +21,52 @@ const EnterName = () => {
   const {
     theme: { dark },
   } = useGlobalContext();
+
+  const { userInput, setUserInput, getUserDetails } = useGlobalContext();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const updateUser = async () => {
+    const firstName = userInput?.firstName?.toLocaleLowerCase();
+    const lastName = userInput?.lastName?.toLocaleLowerCase();
+    const tel = userInput?.tel;
+    const email = userInput?.email?.toLocaleLowerCase();
+
+    const url = `${baseURL}/auth/update-user/${email}`;
+    if (!tel || !firstName || !lastName) {
+      showAlert({
+        message: "Please fill all inputs",
+        title: "Ooops",
+        type: "error",
+      });
+
+      return;
+    }
+    setIsLoading(true);
+
+    const payload = { firstName, lastName, tel };
+
+    try {
+      const res = await axios.patch(url, payload, await config());
+      showAlert({
+        message: res.data.msg,
+        title: "Profile Details updated Successfully",
+        type: "success",
+      });
+      await getUserDetails();
+      router.push("/(onboarding)/paymentMethod");
+    } catch (error: any) {
+      const errorLog = JSON.stringify(error);
+      console.log(errorLog);
+      showAlert({
+        message: `${error?.response?.data.msg || "An error occurred"}`,
+        title: "Oops!",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView className='p-4'>
@@ -39,6 +88,8 @@ const EnterName = () => {
       <View className='my-1'>
         <Text text='First Name' styles='mb-1' />
         <TextField
+          val={userInput?.firstName || ""}
+          onChange={(val) => setUserInput({ ...userInput, firstName: val })}
           border={1}
           type='name-phone-pad'
           styles='p-3 rounded-md mb-4'
@@ -52,6 +103,8 @@ const EnterName = () => {
           type='name-phone-pad'
           styles='p-3 rounded-md mb-4'
           place='Enter lastname'
+          val={userInput?.lastName || ""}
+          onChange={(val) => setUserInput({ ...userInput, lastName: val })}
         />
       </View>
       <Text text='Enter Mobile Number' styles='font-medium my-2' md />
@@ -66,12 +119,15 @@ const EnterName = () => {
         <TextField
           type='phone-pad'
           border={1}
+          val={userInput?.tel || ""}
+          onChange={(val) => setUserInput({ ...userInput, tel: val })}
           styles='flex-1 ml-2 rounded-md px-4'
         />
       </View>
 
       <Button
-        action={() => router.push("/(onboarding)/paymentMethod")}
+        loadingState={isLoading}
+        action={updateUser}
         label='Continue'
         bgColor='#3EA2FF'
         textColor='white'
