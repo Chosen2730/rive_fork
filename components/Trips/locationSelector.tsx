@@ -11,7 +11,10 @@ const LocationSelector = ({
   setLocationDetails,
   place,
 }: LocationSelectorType) => {
-  const { MAPS_KEY2 } = useGlobalContext();
+  const {
+    MAPS_KEY2,
+    theme: { dark },
+  } = useGlobalContext();
   // console.log(MAPS_KEY2);
   return (
     <View>
@@ -32,6 +35,10 @@ const LocationSelector = ({
             backgroundColor: "transparent",
             color: "#8A8A8A",
           },
+        }}
+        textInputProps={{
+          placeholderTextColor: "#8A8A8A",
+          returnKeyType: "search",
         }}
         onPress={(data, details = null) => {
           const desc = data.description;
