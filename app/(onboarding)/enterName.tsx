@@ -14,6 +14,7 @@ import { View } from "react-native";
 import { useGlobalContext } from "../../AppContext/context";
 import { baseURL, config } from "../../api";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 ("react-native-gesture-handler");
 
 const EnterName = () => {
@@ -22,7 +23,8 @@ const EnterName = () => {
     theme: { dark },
   } = useGlobalContext();
 
-  const { userInput, setUserInput, getUserDetails } = useGlobalContext();
+  const { userInput, setUserInput, getUserDetails, getSavedUser } =
+    useGlobalContext();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,6 +56,7 @@ const EnterName = () => {
         type: "success",
       });
       await getUserDetails();
+      await getSavedUser();
       router.push("/(onboarding)/paymentMethod");
     } catch (error: any) {
       const errorLog = JSON.stringify(error);

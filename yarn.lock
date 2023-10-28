@@ -2274,6 +2274,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/dateformat@^5.0.1":
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/@types/dateformat/-/dateformat-5.0.1.tgz#81e8db3d8aa66e2a8cb347d8810dc72d4120342b"
+  integrity sha512-mdFQYNj44kRls3iZTgW0vkMOyko70KRsxkjD6qjSdfkVZLXlIFU6w9mYd62zv2uZBYyKbYkr9Mh0EVulIvyZ3g==
+
 "@types/geojson@^7946.0.10":
   version "7946.0.11"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.11.tgz#012c17cb2256ad8de78560da851ab914a7b9b40e"
@@ -3597,6 +3602,11 @@ data-urls@^3.0.2:
     abab "^2.0.6"
     whatwg-mimetype "^3.0.0"
     whatwg-url "^11.0.0"
+
+dateformat@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-5.0.3.tgz#fe2223eff3cc70ce716931cb3038b59a9280696e"
+  integrity sha512-Kvr6HmPXUMerlLcLF+Pwq3K7apHpYmGDVqrxcDasBg86UcKeTSNWbEzU8bwdXnxnR44FtMhJAxI4Bov6Y/KUfA==
 
 dayjs@^1.8.15:
   version "1.11.10"

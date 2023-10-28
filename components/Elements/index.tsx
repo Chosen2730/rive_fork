@@ -231,6 +231,7 @@ type TextButtonType = {
   borderColor?: string;
   action?: (event: GestureResponderEvent) => void;
   bgColor?: ColorValue;
+  loadingState?: boolean;
 };
 
 export const TextButton = ({
@@ -240,6 +241,7 @@ export const TextButton = ({
   textStyle,
   bgColor,
   action,
+  loadingState,
 }: TextButtonType) => {
   const {
     theme: { dark },
@@ -253,7 +255,11 @@ export const TextButton = ({
       className={styles}
       onPress={action}
     >
-      <Text text={label} color={textColor} styles={textStyle} />
+      {loadingState ? (
+        <ActivityIndicator color={"#ECF9FF"} />
+      ) : (
+        <Text text={label} color={textColor} styles={textStyle} />
+      )}
     </TouchableOpacity>
   );
 };

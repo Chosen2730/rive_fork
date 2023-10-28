@@ -5,14 +5,11 @@ import { useGlobalContext } from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
 
 const TrackMap = () => {
-  const {
-    pickupLocation,
-    destinationLocation,
-    useLocation,
-    location,
-    MAPS_KEY2,
-  } = useGlobalContext();
+  const { MAPS_KEY2, riveDetails } = useGlobalContext();
   const mapRef = useRef<MapView | null>(null);
+
+  const pickupLocation = riveDetails?.origin;
+  const destinationLocation = riveDetails?.destination;
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -20,15 +17,11 @@ const TrackMap = () => {
       if (pickupLocation) {
         markersToFit.push("origin");
       }
-      if (location) {
-        markersToFit.push("location");
-      }
-
       mapRef.current.fitToSuppliedMarkers(markersToFit, {
         edgePadding: { bottom: 50, left: 50, right: 50, top: 50 },
       });
     }
-  }, [pickupLocation, destinationLocation, location, useLocation]);
+  }, [pickupLocation, destinationLocation]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -36,7 +29,9 @@ const TrackMap = () => {
         provider={PROVIDER_GOOGLE}
         ref={mapRef}
         region={{
+          // @ts-ignore
           latitude: destinationLocation?.lat,
+          // @ts-ignore
           longitude: destinationLocation?.lng,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
@@ -45,6 +40,7 @@ const TrackMap = () => {
       >
         {destinationLocation && pickupLocation && (
           <MapViewDirections
+            // @ts-ignore
             origin={
               pickupLocation
                 ? {
@@ -83,17 +79,6 @@ const TrackMap = () => {
             title={"Pickup Destination"}
             identifier='destination'
             pinColor='#0000ff'
-          />
-        )}
-        {useLocation && location && (
-          <Marker
-            coordinate={{
-              longitude: location?.lng,
-              latitude: location?.lat,
-            }}
-            description={location?.desc}
-            title={"Your Location"}
-            identifier='location'
           />
         )}
       </MapView>

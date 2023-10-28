@@ -68,7 +68,6 @@ const EnterPhone = () => {
     const email = userInput?.email?.toLowerCase();
     try {
       const res = await axios.post(url, { email });
-      console.log(res.data.msg);
       router.push("/(onboarding)/enterOTP");
       showAlert({
         message: res.data.msg,

@@ -13,6 +13,7 @@ import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../AppContext/context";
 import { ScrollView } from "react-native-gesture-handler";
+import CurrencyFormatter from "../../components/Elements/currency";
 
 const PickupSummary = () => {
   const router = useRouter();
@@ -22,9 +23,9 @@ const PickupSummary = () => {
     tripDetails,
     tripPrice,
     theme: { dark },
+    bookRide,
+    isLoading,
   } = useGlobalContext();
-
-  console.log({ tripDetails, pickupLocation, destinationLocation });
 
   return (
     <SafeAreaView style={{ paddingBottom }} className='p-4 flex-1'>
@@ -107,11 +108,11 @@ const PickupSummary = () => {
             }}
             className='border-b-[1px] my-2'
           />
-
-          <Text text={`₦ ${tripPrice}`} />
+          <CurrencyFormatter value={tripPrice} />
         </Container>
         <Button
-          action={() => router.push("/(trips)/riveTracking")}
+          action={bookRide}
+          loadingState={isLoading}
           bgColor='#3EA2FF'
           styles='mt-4'
           textColor='white'

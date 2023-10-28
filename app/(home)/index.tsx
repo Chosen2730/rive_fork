@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";
 import RiveList from "../../components/Home/riveList";
 import { useGlobalContext } from "../../AppContext/context";
+import { ActivityIndicator } from "react-native";
 
 export type RiveType = {
   amount: number;
@@ -26,35 +27,14 @@ export type RiveType = {
 
 const Welcome = () => {
   const router = useRouter();
-  const currentRives: RiveType[] = [
-    {
-      amount: 4900,
-      date: "Today 12:30PM",
-      description: "Ford escape 6GK2C14",
-      status: "cancelled",
-    },
-    {
-      amount: 5500,
-      date: "Today 12:30PM",
-      description: "Ford escape 6GK2C14",
-      status: "pending",
-    },
-    {
-      amount: 7000,
-      date: "Today 12:30PM",
-      description: "Ford escape 6GK2C14",
-      status: "in progress",
-    },
-    {
-      amount: 2400,
-      date: "Today 12:30PM",
-      description: "Ford escape 6GK2C14",
-      status: "completed",
-    },
-  ];
-
-  const [rives, setRives] = useState<RiveType[]>(currentRives);
-  const { getUserLocation, getSavedUser, userDetails } = useGlobalContext();
+  const {
+    getUserLocation,
+    getSavedUser,
+    userDetails,
+    getRives,
+    rives,
+    isLoading,
+  } = useGlobalContext();
 
   const getUser = async () => {
     await getSavedUser();
@@ -64,7 +44,9 @@ const Welcome = () => {
     getUserLocation();
     getUser();
   }, []);
-
+  useEffect(() => {
+    getRives();
+  }, [userDetails]);
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
       <View className='flex-row items-center justify-between mt-10'>
@@ -109,7 +91,15 @@ const Welcome = () => {
         </Container>
       </View>
       <ScrollView className='flex-1 mt-5' showsVerticalScrollIndicator={false}>
-        {rives?.length < 1 ? <NoRives /> : <RiveList rives={rives} />}
+        {isLoading ? (
+          <View className='flex-1 items-center justify-center'>
+            <ActivityIndicator />
+          </View>
+        ) : rives?.length < 1 ? (
+          <NoRives />
+        ) : (
+          <RiveList rives={rives} />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

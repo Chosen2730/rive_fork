@@ -7,19 +7,26 @@ import {
   paddingTop,
   paddingBottom,
   TextButton,
-  Button,
 } from "../../components/Elements";
 
 import { Image, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../AppContext/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Settings = () => {
   const router = useRouter();
   const {
     toggleTheme,
     theme: { dark },
+    deleteUser,
+    isLoading,
   } = useGlobalContext();
+
+  const logout = async () => {
+    await AsyncStorage.clear();
+    router.push("/(onboarding)/login");
+  };
 
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
@@ -56,6 +63,7 @@ const Settings = () => {
         />
         <TextButton
           textStyle=''
+          action={logout}
           label='Report User'
           styles='py-4 rounded-md border-b-[1px] '
           textColor='#3EA2FF'
@@ -68,7 +76,8 @@ const Settings = () => {
           textColor='#3EA2FF'
         />
         <TextButton
-          action={() => router.push("/(settings)/terms")}
+          action={deleteUser}
+          loadingState={isLoading}
           textStyle=''
           label='Delete Account'
           styles='p-4 rounded-md border-b-[1px]'

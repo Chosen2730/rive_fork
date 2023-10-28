@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const EnterOTP = () => {
   const router = useRouter();
-  const { userInput, getUserDetails } = useGlobalContext();
+  const { userInput, getUserDetails, getSavedUser } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState<string>("");
   const input = useRef<OTPTextView>(null);
@@ -41,11 +41,9 @@ const EnterOTP = () => {
     setIsLoading(true);
 
     const payload = { otp, email: userInput?.email?.toLocaleLowerCase() };
-    console.log(payload);
 
     try {
       const res = await axios.post(url, payload);
-      console.log(res.data.msg);
       showAlert({
         message: res.data.msg,
         title: "Verification Successful",
@@ -57,11 +55,13 @@ const EnterOTP = () => {
       await AsyncStorage.setItem("token", token);
       if (profileCompleted === true) {
         await getUserDetails();
+        await getSavedUser();
         router.push("/(home)");
       } else {
         router.push("/(onboarding)/enterName");
       }
     } catch (error: any) {
+      console.log({ error: error?.response?.data.msg });
       showAlert({
         message: `${error?.response?.data.msg || "An error occurred"}`,
         title: "Oops!",
@@ -95,7 +95,7 @@ const EnterOTP = () => {
       setIsLoading(false);
     }
   };
-
+  // console.log(otp, userInput?.email);
   return (
     <SafeAreaView className='p-4'>
       <Ionicons
@@ -105,7 +105,10 @@ const EnterOTP = () => {
         color={iconColor()}
       />
       <Text
-        text='Enter the 6-digit code sent to you at 0807*****546.'
+        text={`Enter the 6-digit code sent to you at ${userInput?.email?.slice(
+          0,
+          3
+        )}****`}
         styles='font-medium my-6'
         md
       />
@@ -121,11 +124,7 @@ const EnterOTP = () => {
       <View className='my-4'>
         {isResendShown ? (
           <View className='flex-row items-center'>
-            <Text
-              styles='mr-1'
-              color='#4B4B4B'
-              text='I haven’t received any code,'
-            />
+            <Text styles='mr-1' text='I haven’t received any code,' />
             <TextButton action={resendOTP} label='Resend' textColor='#3EA2FF' />
           </View>
         ) : (

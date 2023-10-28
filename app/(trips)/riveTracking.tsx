@@ -1,17 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import {
-  Container,
-  Text,
-  iconColor,
-  paddingBottom,
-  Button,
-  ButtonContainer,
-} from "../../components/Elements";
-
+import { Container, Text, iconColor, Button } from "../../components/Elements";
 import { Image, Linking, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../AppContext/context";
 import TrackMap from "../../components/Trips/track";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -19,14 +10,7 @@ import { CallIcon, RiveIcon } from "../../assets/svg";
 
 const RiveTracking = () => {
   const router = useRouter();
-  const {
-    pickupLocation,
-    destinationLocation,
-    tripDetails,
-    theme: { dark },
-  } = useGlobalContext();
-
-  console.log({ tripDetails, pickupLocation, destinationLocation });
+  const { riveDetails } = useGlobalContext();
 
   return (
     <View className='flex-1'>
@@ -41,16 +25,29 @@ const RiveTracking = () => {
       </View>
       <TrackMap />
       <View className='absolute bottom-5 w-full'>
-        <Waiting />
-        <Driver />
-        <Riving />
-        <Button
-          action={() => router.push("/(trips)/paymentMethod")}
-          label='Complete Trip'
-          styles='m-4'
-          bgColor='#3EA2FF'
-          textColor='white'
-        />
+        {riveDetails?.isDriverAssigned === false && <Waiting />}
+        {riveDetails?.isDriverAssigned === true && <Driver />}
+        {riveDetails?.tripStatus === "ongoing" && <Riving />}
+
+        {riveDetails?.tripStatus !== "ongoing" && (
+          <Button
+            action={() => router.push("/(home)")}
+            label='Cancel Trip'
+            styles='m-4'
+            bgColor='#F55050'
+            textColor='white'
+          />
+        )}
+
+        {riveDetails?.tripStatus === "completed" && (
+          <Button
+            action={() => router.push("/(trips)/paymentMethod")}
+            label='Complete Trip'
+            styles='m-4'
+            bgColor='#3EA2FF'
+            textColor='white'
+          />
+        )}
       </View>
     </View>
   );
@@ -59,6 +56,7 @@ const RiveTracking = () => {
 export default RiveTracking;
 
 export const Waiting = () => {
+  const { userDetails } = useGlobalContext();
   return (
     <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6]'>
       <Container
@@ -72,7 +70,12 @@ export const Waiting = () => {
             source={require("../../assets/images/home/user.png")}
           />
           <View>
-            <Text text='Emmanuel John' color='black' bold />
+            <Text
+              styles='capitalize'
+              text={`${userDetails?.firstName} ${userDetails?.lastName}`}
+              color='black'
+              bold
+            />
             <Text
               xs
               text='Waiting for Driver...'
@@ -122,6 +125,7 @@ export const Driver = () => {
 };
 
 export const Riving = () => {
+  const { userDetails } = useGlobalContext();
   return (
     <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6]'>
       <Container
@@ -135,7 +139,12 @@ export const Riving = () => {
             source={require("../../assets/images/home/user.png")}
           />
           <View>
-            <Text text='Emmanuel John' color='black' bold />
+            <Text
+              text={`${userDetails?.firstName} ${userDetails?.lastName}`}
+              styles='capitalize'
+              color='black'
+              bold
+            />
             <Text xs text='Already riving' styles='mt-1' color='#7A7A7A' />
           </View>
         </View>

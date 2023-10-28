@@ -12,6 +12,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useGlobalContext } from "../../AppContext/context";
+import CurrencyFormatter from "../../components/Elements/currency";
 
 const PackageDetails = () => {
   const [selectedRideIndex, setSelectedRideIndex] = useState(0);
@@ -44,6 +45,10 @@ const PackageDetails = () => {
   useEffect(() => {
     setChosenRide(rides[selectedRideIndex]);
   }, [selectedRideIndex]);
+
+  useEffect(() => {
+    setChosenRide(rides[0]);
+  }, []);
 
   // console.log(rides);
   if (isLoading) {
@@ -92,7 +97,7 @@ const PackageDetails = () => {
               />
               <View className='p-6 flex-row w-full items-center'>
                 <View className='flex-1'>
-                  <Text text={`₦${price}`} bold />
+                  <CurrencyFormatter value={price} />
                   <Text
                     text={category}
                     styles='capitalize'

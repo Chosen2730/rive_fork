@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Alert, useColorScheme } from "react-native";
+import { Alert, GestureResponderEvent, useColorScheme } from "react-native";
 import {
   DefaultTheme,
   DarkTheme,
@@ -20,6 +20,7 @@ import axios from "axios";
 import { baseURL, config } from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 type TripDetailsType = {
   distance: {
@@ -35,15 +36,39 @@ type UserDetailsType = {
   email?: string;
   tel?: string;
   paymentMethod?: string;
+  _id?: string;
 };
 
 type RideType = {
   category?: string;
-  price?: number;
+  price: number;
   features?: string;
   type?: string;
   isRecommended?: boolean;
+  _id?: string;
+};
+export type RiveType = {
+  isDriverAssigned: boolean;
   _id: string;
+  ride: RideType;
+  user: string;
+  price: number;
+  distance: number;
+  duration: string;
+  tripStatus: string;
+  paymentStatus: string;
+  createdAt: Date;
+  updatedAt: Date;
+  origin: {
+    lng: number;
+    lat: number;
+    desc: string;
+  };
+  destination: {
+    lng: number;
+    lat: number;
+    desc: string;
+  };
 };
 
 export type AppContextType = {
@@ -75,6 +100,12 @@ export type AppContextType = {
   tripPrice: number;
   getTripPrice: Function;
   setChosenRide: Dispatch<RideType | null>;
+  bookRide: any;
+  rives: RiveType[];
+  getRives: Function;
+  riveDetails: RiveType | null;
+  getRiveDetails: any;
+  deleteUser: any;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -99,8 +130,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [rides, setRides] = useState<RideType[] | []>([]);
+  const [rives, setRives] = useState<RiveType[] | []>([]);
   const [tripPrice, setTripPrice] = useState<number>(0);
   const [chosenRide, setChosenRide] = useState<RideType | null>(null);
+  const [riveDetails, setRiveDetails] = useState<RiveType | null>(null);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -196,6 +229,34 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const deleteUser = () => {
+    const url = `${baseURL}/auth/delete-account`;
+    setIsLoading(true);
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account?",
+      [
+        { text: "No", onPress: () => {} },
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              const res = await axios.delete(url, await config());
+              await AsyncStorage.clear();
+              router.push("/(onboarding)/login");
+            } catch (error: any) {
+              console.log(error.response.data.msg);
+            } finally {
+              setIsLoading(false);
+            }
+          },
+        },
+      ],
+
+      { cancelable: false }
+    );
+  };
+
   const getRides = async () => {
     const url = `${baseURL}/rides`;
     setIsLoading(true);
@@ -216,14 +277,72 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       distance: tripDetails?.distance.value,
       ride: chosenRide?._id,
     };
-    console.log(payload);
     try {
       const res = await axios.post(url, payload, await config());
-      console.log(res.data);
       setTripPrice(res.data.tripPrice);
       router.replace("/(trips)/pickupSummary");
     } catch (error: any) {
+      console.log(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const bookRide = async () => {
+    const url = `${baseURL}/rive`;
+    setIsLoading(true);
+    const payload = {
+      distance: tripDetails?.distance.value,
+      ride: chosenRide?._id,
+      duration: tripDetails?.duration,
+      price: tripPrice,
+      user: userDetails?._id,
+      destination: destinationLocation,
+      origin: pickupLocation,
+    };
+    try {
+      const res = await axios.post(url, payload, await config());
+      const riveId = res.data.rive._id;
+      await getRiveDetails(riveId);
+      Toast.show({
+        text1: "Ride Booked",
+        text2: "Your ride has been booked successfully",
+        type: "success",
+      });
+      getRives();
+    } catch (error: any) {
       console.log({ error });
+      Toast.show({
+        text1: "Error",
+        text2: error.response.data.msg,
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getRives = async () => {
+    const id = userDetails?._id;
+    const url = `${baseURL}/rive/userRives/${id}`;
+    setIsLoading(true);
+    try {
+      const res = await axios.get(url, await config());
+      setRives(res.data.rives);
+    } catch (error: any) {
+      console.log(error.response.data.msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const getRiveDetails = async (id: string) => {
+    const url = `${baseURL}/rive/riveDetails/${id}`;
+    setIsLoading(true);
+    try {
+      const res = await axios.get(url, await config());
+      setRiveDetails(res.data.rive);
+      router.push("/(trips)/riveTracking");
+    } catch (error: any) {
       console.log(error.response.data.msg);
     } finally {
       setIsLoading(false);
@@ -287,6 +406,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         tripPrice,
         setChosenRide,
         getTripPrice,
+        bookRide,
+        rives,
+        getRives,
+        riveDetails,
+        getRiveDetails,
+        deleteUser,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>
