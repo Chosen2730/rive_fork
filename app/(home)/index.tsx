@@ -1,16 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Container,
   Text,
-  iconColor,
   paddingTop,
   paddingBottom,
 } from "../../components/Elements";
 
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";

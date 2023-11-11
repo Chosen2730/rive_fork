@@ -1,9 +1,8 @@
-import { View } from "react-native";
 import React from "react";
+import { View } from "react-native";
 import { Container, Text, TextButton } from "../Elements";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { RiveType } from "../../AppContext/context";
-import dateFormat, { masks } from "dateformat";
+import { RiveType, useGlobalContext } from "../../AppContext/context";
+import dateFormat from "dateformat";
 import { router } from "expo-router";
 import CurrencyFormatter from "../Elements/currency";
 
@@ -11,7 +10,34 @@ type RiveListType = {
   rives: RiveType[];
 };
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "cancelled":
+      return "bg-red-600";
+    case "completed":
+      return "bg-green-500";
+    case "ongoing":
+      return "bg-yellow-500";
+    default:
+      return "bg-primary";
+  }
+};
+
 const RiveList = ({ rives }: RiveListType) => {
+  const { getRiveDetails, isLoading } = useGlobalContext();
+
+  const renderDetailsButton = (_id: string) => {
+    return (
+      <TextButton
+        styles='text-right mt-1'
+        textColor='#3EA2FF'
+        label='Details'
+        loadingState={isLoading}
+        action={() => getRiveDetails(_id)}
+      />
+    );
+  };
+
   return (
     <View>
       <View className='flex-row justify-between'>
@@ -26,34 +52,34 @@ const RiveList = ({ rives }: RiveListType) => {
         {rives.map(
           ({ createdAt, price, _id, tripStatus: status, ride }, ind) => {
             const date = dateFormat(createdAt, "ddd, mmm dS, h:MMtt");
+            const cancelled = status === "cancelled";
+            const completed = status === "completed";
+            const statusColor = getStatusColor(status);
+
             return (
-              <TouchableOpacity key={_id}>
+              <View key={_id}>
                 <Container styles='p-8 rounded-md mb-4'>
                   <View className='flex-row items-center justify-between'>
                     <CurrencyFormatter value={price} />
+
                     <View className='flex-row items-center'>
                       <View
-                        className={`w-2 h-2 rounded-full ${
-                          status === "cancelled"
-                            ? "bg-red-600"
-                            : status === "completed"
-                            ? "bg-green-500"
-                            : status === "ongoing"
-                            ? "bg-yellow-500"
-                            : "bg-blue-500"
-                        }  mr-2`}
+                        className={`w-2 h-2 rounded-full ${statusColor}  mr-2`}
                       />
                       <Text styles='capitalize' text={status} />
                     </View>
                   </View>
-                  <Text color='#7A7A7A' styles='my-2' text={date} />
+                  <View className='flex-row items-center justify-between'>
+                    <Text color='#7A7A7A' styles='my-2' text={date} />
+                    {renderDetailsButton(_id)}
+                  </View>
                   <Text
                     color='#7A7A7A'
                     styles='capitalize'
                     text={ride.category}
                   />
                 </Container>
-              </TouchableOpacity>
+              </View>
             );
           }
         )}

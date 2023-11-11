@@ -277,7 +277,7 @@ export const showAlert = ({
     text1: title,
     text2: message,
     type: type,
-    position: "top",
+    position: "bottom",
   });
 };
 

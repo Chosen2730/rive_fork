@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useGlobalContext } from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
+import { Image } from "react-native";
 
 const TrackMap = () => {
   const { MAPS_KEY2, riveDetails } = useGlobalContext();
@@ -10,6 +11,10 @@ const TrackMap = () => {
 
   const pickupLocation = riveDetails?.origin;
   const destinationLocation = riveDetails?.destination;
+  const driverLocation = riveDetails?.driver;
+  const tripStatus = riveDetails?.tripStatus;
+  const cancelled = tripStatus === "cancelled";
+  const completed = tripStatus === "completed";
 
   useEffect(() => {
     if (mapRef.current !== null) {
@@ -17,11 +22,14 @@ const TrackMap = () => {
       if (pickupLocation) {
         markersToFit.push("origin");
       }
+      if (driverLocation) {
+        markersToFit.push("driver");
+      }
       mapRef.current.fitToSuppliedMarkers(markersToFit, {
         edgePadding: { bottom: 50, left: 50, right: 50, top: 50 },
       });
     }
-  }, [pickupLocation, destinationLocation]);
+  }, [pickupLocation, destinationLocation, driverLocation]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -54,7 +62,7 @@ const TrackMap = () => {
               latitude: destinationLocation?.lat,
             }}
             apikey={MAPS_KEY2}
-            strokeColor='red'
+            strokeColor='#3EA2FF'
             strokeWidth={3}
           />
         )}
@@ -79,6 +87,47 @@ const TrackMap = () => {
             title={"Pickup Destination"}
             identifier='destination'
             pinColor='#0000ff'
+          />
+        )}
+
+        {!(cancelled || completed) && driverLocation && (
+          <Marker
+            coordinate={{
+              longitude: driverLocation?.lng,
+              latitude: driverLocation?.lat,
+            }}
+            description={driverLocation?.desc}
+            title={"Driver Destination"}
+            identifier='driver'
+            pinColor='#0000ff'
+          >
+            <View className='w-12 h-12 rounded-full bg-white items-center justify-center'>
+              <Image
+                className='w-8'
+                resizeMode='contain'
+                source={require("../../assets/images/home/driver.png")}
+              />
+            </View>
+          </Marker>
+        )}
+        {driverLocation && pickupLocation && (
+          <MapViewDirections
+            // @ts-ignore
+            origin={
+              pickupLocation
+                ? {
+                    longitude: pickupLocation?.lng,
+                    latitude: pickupLocation?.lat,
+                  }
+                : location
+            }
+            destination={{
+              longitude: driverLocation?.lng,
+              latitude: driverLocation?.lat,
+            }}
+            apikey={MAPS_KEY2}
+            strokeColor='green'
+            strokeWidth={3}
           />
         )}
       </MapView>

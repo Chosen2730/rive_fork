@@ -75,6 +75,7 @@ const EnterPhone = () => {
         type: "success",
       });
     } catch (error: any) {
+      console.log(error?.response?.data);
       showAlert({
         message: `${error?.response?.data.msg || "An error occurred"}`,
         title: "Oops!",

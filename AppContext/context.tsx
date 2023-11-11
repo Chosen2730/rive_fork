@@ -47,8 +47,13 @@ type RideType = {
   isRecommended?: boolean;
   _id?: string;
 };
+type CoordType = {
+  lng: number;
+  lat: number;
+  desc: string;
+};
 export type RiveType = {
-  isDriverAssigned: boolean;
+  assignedDriver: UserDetailsType;
   _id: string;
   ride: RideType;
   user: string;
@@ -59,16 +64,9 @@ export type RiveType = {
   paymentStatus: string;
   createdAt: Date;
   updatedAt: Date;
-  origin: {
-    lng: number;
-    lat: number;
-    desc: string;
-  };
-  destination: {
-    lng: number;
-    lat: number;
-    desc: string;
-  };
+  origin: CoordType;
+  destination: CoordType;
+  driver: CoordType;
 };
 
 export type AppContextType = {
@@ -311,11 +309,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       });
       getRives();
     } catch (error: any) {
-      console.log({ error });
+      console.log(error?.response?.data);
       Toast.show({
         text1: "Error",
         text2: error.response.data.msg,
         type: "error",
+        position: "bottom",
       });
     } finally {
       setIsLoading(false);
@@ -338,6 +337,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const getRiveDetails = async (id: string) => {
     const url = `${baseURL}/rive/riveDetails/${id}`;
     setIsLoading(true);
+    console.log("Get rive details");
     try {
       const res = await axios.get(url, await config());
       setRiveDetails(res.data.rive);
@@ -373,8 +373,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       setPickupLocation(location);
     }
   }, [useLocation]);
-
-  // console.log({ MAPS_KEY2, MAPS_KEY });
 
   return (
     <AppContext.Provider
@@ -417,6 +415,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       <ThemeProvider value={theme}>{children}</ThemeProvider>
     </AppContext.Provider>
   );
+};
+
+export const logResult = (data: any) => {
+  return console.log(JSON.stringify(data, null, 2));
 };
 
 // eas build --profile preview --platform android

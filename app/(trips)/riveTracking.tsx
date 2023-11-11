@@ -1,16 +1,50 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Container, Text, iconColor, Button } from "../../components/Elements";
-import { Image, Linking, View } from "react-native";
-import { useGlobalContext } from "../../AppContext/context";
+import React, { useState } from "react";
+import { Text, iconColor, Button, showAlert } from "../../components/Elements";
+import { View } from "react-native";
+import { logResult, useGlobalContext } from "../../AppContext/context";
 import TrackMap from "../../components/Trips/track";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { CallIcon, RiveIcon } from "../../assets/svg";
+import Waiting from "../../components/Trips/waiting";
+import Driver from "../../components/Trips/driver";
+import Riving from "../../components/Trips/riving";
+import { baseURL, config } from "../../api";
+import axios from "axios";
 
 const RiveTracking = () => {
   const router = useRouter();
-  const { riveDetails } = useGlobalContext();
+  const { riveDetails, getRiveDetails, getRives } = useGlobalContext();
+
+  const { tripStatus } = riveDetails || {};
+  const ongoing = tripStatus === "ongoing";
+  const pending = tripStatus === "pending";
+  const approaching = tripStatus === "driver approaching";
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const cancelTrip = async () => {
+    const id = riveDetails?._id;
+    const url = `${baseURL}/rive/riveDetails/${id}`;
+    setIsCancelling(true);
+
+    try {
+      await axios.patch(url, { tripStatus: "cancelled" }, await config());
+      showAlert({
+        type: "success",
+        title: "Trip Cancelled",
+        message: "Trip Cancelled Successfully",
+      });
+      getRiveDetails();
+      getRives();
+      router.push("/(home)/");
+    } catch (error: any) {
+      const msg = error.response?.data?.msg || "An error occurred";
+      showAlert({ type: "error", title: "Oops!", message: msg });
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  // logResult(riveDetails);
 
   return (
     <View className='flex-1'>
@@ -25,27 +59,18 @@ const RiveTracking = () => {
       </View>
       <TrackMap />
       <View className='absolute bottom-5 w-full'>
-        {riveDetails?.isDriverAssigned === false && <Waiting />}
-        {riveDetails?.isDriverAssigned === true && <Driver />}
-        {riveDetails?.tripStatus === "ongoing" && <Riving />}
+        {pending && <Waiting />}
+        {approaching && <Driver />}
+        {ongoing && <Riving />}
 
-        {riveDetails?.tripStatus !== "ongoing" && (
+        {(pending || approaching) && (
           <Button
-            action={() => router.push("/(home)")}
+            action={cancelTrip}
             label='Cancel Trip'
             styles='m-4'
             bgColor='#F55050'
             textColor='white'
-          />
-        )}
-
-        {riveDetails?.tripStatus === "completed" && (
-          <Button
-            action={() => router.push("/(trips)/paymentMethod")}
-            label='Complete Trip'
-            styles='m-4'
-            bgColor='#3EA2FF'
-            textColor='white'
+            loadingState={isCancelling}
           />
         )}
       </View>
@@ -54,110 +79,3 @@ const RiveTracking = () => {
 };
 
 export default RiveTracking;
-
-export const Waiting = () => {
-  const { userDetails } = useGlobalContext();
-  return (
-    <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6]'>
-      <Container
-        color='#ECF1F6'
-        styles='flex-row justify-between items-center flex-1 rounded-md p-4'
-      >
-        <View className='flex-row items-center'>
-          <Image
-            className='w-[40px] h-[40px]'
-            resizeMode='contain'
-            source={require("../../assets/images/home/user.png")}
-          />
-          <View>
-            <Text
-              styles='capitalize'
-              text={`${userDetails?.firstName} ${userDetails?.lastName}`}
-              color='black'
-              bold
-            />
-            <Text
-              xs
-              text='Waiting for Driver...'
-              styles='mt-1'
-              color='#7A7A7A'
-            />
-          </View>
-        </View>
-      </Container>
-    </View>
-  );
-};
-
-export const Driver = () => {
-  return (
-    <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6]'>
-      <Container
-        color='#ECF1F6'
-        styles='flex-row justify-between items-center flex-1 p-4'
-      >
-        <View className='flex-row items-center'>
-          <Image
-            className='w-[40px] h-[40px]'
-            resizeMode='contain'
-            source={require("../../assets/images/home/user.png")}
-          />
-          <View>
-            <Text text='Nathaniel Effiong' color='black' bold />
-            <Text xs text='Toyota Camry' styles='mt-1' color='#7A7A7A' />
-          </View>
-        </View>
-        <View className='flex-row'>
-          <View>
-            <Text color='#7A7A7A' styles='text-right' text='ETA: 5 Mins' />
-            <Text color='#7A7A7A' styles='text-right' text='LVHJ321' />
-          </View>
-        </View>
-      </Container>
-      <TouchableOpacity
-        onPress={() => Linking.openURL(`tel:${"08132157321"}`)}
-        className='bg-[#59FF3E] flex-grow items-center justify-center p-2'
-      >
-        <CallIcon color='black' />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-export const Riving = () => {
-  const { userDetails } = useGlobalContext();
-  return (
-    <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6]'>
-      <Container
-        color='#ECF1F6'
-        styles='flex-row justify-between items-center flex-1 p-4'
-      >
-        <View className='flex-row items-center'>
-          <Image
-            className='w-[40px] h-[40px]'
-            resizeMode='contain'
-            source={require("../../assets/images/home/user.png")}
-          />
-          <View>
-            <Text
-              text={`${userDetails?.firstName} ${userDetails?.lastName}`}
-              styles='capitalize'
-              color='black'
-              bold
-            />
-            <Text xs text='Already riving' styles='mt-1' color='#7A7A7A' />
-          </View>
-        </View>
-        <View className='flex-row'>
-          <View>
-            <Text styles='text-right' color='#7A7A7A' text='ETA: 5 Mins' />
-            <Text color='#7A7A7A' text='Johnson Emmanuel' styles='text-right' />
-          </View>
-        </View>
-      </Container>
-      <TouchableOpacity className='bg-[#3EA2FF] flex-grow items-center justify-center p-2'>
-        <RiveIcon color='black' />
-      </TouchableOpacity>
-    </View>
-  );
-};

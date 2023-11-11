@@ -1,6 +1,5 @@
-import { ActivityIndicator, View, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import { RiveType } from "./index";
+import { ActivityIndicator, View } from "react-native";
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Button,
