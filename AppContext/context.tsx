@@ -21,6 +21,10 @@ import { baseURL, config } from "../api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
+import io from "socket.io-client";
+
+const url = "https://rive-backend.vercel.app";
+const url2 = "http://localhost:3000";
 
 type TripDetailsType = {
   distance: {
@@ -111,6 +115,7 @@ const AppContext = createContext<AppContextType | null>(null);
 export const useGlobalContext = () => {
   return useContext(AppContext) as AppContextType;
 };
+export const socket = io(url2);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const colorScheme = useColorScheme();
@@ -300,8 +305,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
     try {
       const res = await axios.post(url, payload, await config());
-      const riveId = res.data.rive._id;
-      await getRiveDetails(riveId);
+      // const riveId = res.data.rive._id;
+      socket.emit("bookRide");
+      await getRiveDetails();
       Toast.show({
         text1: "Ride Booked",
         text2: "Your ride has been booked successfully",
@@ -323,21 +329,26 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const getRives = async () => {
     const id = userDetails?._id;
+    if (id === undefined) {
+      return;
+    }
     const url = `${baseURL}/rive/userRives/${id}`;
     setIsLoading(true);
     try {
       const res = await axios.get(url, await config());
       setRives(res.data.rives);
+      // socket.emit("getRives");
+      // socket.emit("bookRide");
     } catch (error: any) {
       console.log(error.response.data.msg);
     } finally {
       setIsLoading(false);
     }
   };
-  const getRiveDetails = async (id: string) => {
-    const url = `${baseURL}/rive/riveDetails/${id}`;
+  const getRiveDetails = async () => {
+    const url = `${baseURL}/rive/user/rive`;
+    // const url = `${baseURL}/rive/riveDetails/${id}`;
     setIsLoading(true);
-    console.log("Get rive details");
     try {
       const res = await axios.get(url, await config());
       setRiveDetails(res.data.rive);
@@ -373,6 +384,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       setPickupLocation(location);
     }
   }, [useLocation]);
+
+  useEffect(() => {
+    socket.on("getStatus", (data) => {
+      console.log("status gotten");
+      getRiveDetails();
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <AppContext.Provider
@@ -422,3 +443,5 @@ export const logResult = (data: any) => {
 };
 
 // eas build --profile preview --platform android
+// eas build --profile development --platform ios
+// eas build -p ios --auto-submit

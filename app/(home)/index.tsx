@@ -13,7 +13,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";
 import RiveList from "../../components/Home/riveList";
-import { useGlobalContext } from "../../AppContext/context";
+import { socket, useGlobalContext } from "../../AppContext/context";
 import { ActivityIndicator } from "react-native";
 
 export type RiveType = {
@@ -45,6 +45,7 @@ const Welcome = () => {
   useEffect(() => {
     getRives();
   }, [userDetails]);
+
   return (
     <SafeAreaView style={{ paddingTop, paddingBottom }} className='px-4 flex-1'>
       <View className='flex-row items-center justify-between mt-10'>

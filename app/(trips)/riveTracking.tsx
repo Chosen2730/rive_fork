@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, iconColor, Button, showAlert } from "../../components/Elements";
 import { View } from "react-native";
-import { logResult, useGlobalContext } from "../../AppContext/context";
+import { logResult, socket, useGlobalContext } from "../../AppContext/context";
 import TrackMap from "../../components/Trips/track";
 import Waiting from "../../components/Trips/waiting";
 import Driver from "../../components/Trips/driver";
@@ -14,6 +14,7 @@ import axios from "axios";
 const RiveTracking = () => {
   const router = useRouter();
   const { riveDetails, getRiveDetails, getRives } = useGlobalContext();
+  const id = riveDetails?._id;
 
   const { tripStatus } = riveDetails || {};
   const ongoing = tripStatus === "ongoing";
@@ -22,7 +23,6 @@ const RiveTracking = () => {
   const [isCancelling, setIsCancelling] = useState(false);
 
   const cancelTrip = async () => {
-    const id = riveDetails?._id;
     const url = `${baseURL}/rive/riveDetails/${id}`;
     setIsCancelling(true);
 
@@ -33,7 +33,8 @@ const RiveTracking = () => {
         title: "Trip Cancelled",
         message: "Trip Cancelled Successfully",
       });
-      getRiveDetails();
+      socket.emit("cancelTrip");
+      getRiveDetails(id);
       getRives();
       router.push("/(home)/");
     } catch (error: any) {

@@ -2,19 +2,17 @@ import { Image, Linking, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Container, Text } from "../Elements";
 import { CallIcon } from "../../assets/svg";
-import { useGlobalContext } from "../../AppContext/context";
+import { logResult, useGlobalContext } from "../../AppContext/context";
 
 const Driver = () => {
   const { userDetails, riveDetails } = useGlobalContext();
+  // logResult(riveDetails);
   return (
     <View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6] h-20'>
-      <Container
-        color='#ECF1F6'
-        styles='flex-row justify-between items-center flex-1 p-4'
-      >
-        <View className='flex-row items-center'>
+      <Container styles='flex-row justify-between items-center flex-1 w-full p-4'>
+        <View className='flex-row items-center flex-1'>
           <Image
-            className='w-[40px] h-[40px]'
+            className='w-[40px]'
             resizeMode='contain'
             source={require("../../assets/images/home/user.png")}
           />
@@ -34,14 +32,16 @@ const Driver = () => {
           </View>
         </View>
       </Container>
-      <TouchableOpacity
-        onPress={() =>
-          Linking.openURL(`tel:${riveDetails?.assignedDriver.tel}`)
-        }
-        className='bg-[#59FF3E] h-full items-center justify-center p-2'
-      >
-        <CallIcon color='black' />
-      </TouchableOpacity>
+      <View className='h-full w-16 flex-row bg-violet-300'>
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL(`tel:${riveDetails?.assignedDriver.tel}`)
+          }
+          className='bg-[#59FF3E] w-full items-center justify-center p-2'
+        >
+          <CallIcon color='black' />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
