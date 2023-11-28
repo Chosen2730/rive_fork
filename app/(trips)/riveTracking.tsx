@@ -16,12 +16,13 @@ const RiveTracking = () => {
   const { riveDetails, getRiveDetails, getRives } = useGlobalContext();
   const id = riveDetails?._id;
 
-  const { tripStatus } = riveDetails || {};
+  const { tripStatus, paymentStatus, price } = riveDetails || {};
   const ongoing = tripStatus === "ongoing";
   const pending = tripStatus === "pending";
+  const completed = tripStatus === "completed";
   const approaching = tripStatus === "driver approaching";
+  const awaitingPayment = tripStatus === "awaiting payment";
   const [isCancelling, setIsCancelling] = useState(false);
-
   const cancelTrip = async () => {
     const url = `${baseURL}/rive/riveDetails/${id}`;
     setIsCancelling(true);
@@ -33,7 +34,7 @@ const RiveTracking = () => {
         title: "Trip Cancelled",
         message: "Trip Cancelled Successfully",
       });
-      socket.emit("cancelTrip");
+      socket.emit("riveUpdated", id);
       getRiveDetails(id);
       getRives();
       router.push("/(home)/");
@@ -44,8 +45,6 @@ const RiveTracking = () => {
       setIsCancelling(false);
     }
   };
-
-  // logResult(riveDetails);
 
   return (
     <View className='flex-1'>
@@ -63,6 +62,16 @@ const RiveTracking = () => {
         {pending && <Waiting />}
         {approaching && <Driver />}
         {ongoing && <Riving />}
+        {awaitingPayment && paymentStatus === "Pending" && (
+          <Button
+            action={() => router.push("/(onboarding)/paymentMethod")}
+            label='Make Payment'
+            styles='m-4'
+            bgColor='#3EA2FF'
+            textColor='white'
+            loadingState={isCancelling}
+          />
+        )}
 
         {(pending || approaching) && (
           <Button

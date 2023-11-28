@@ -60,6 +60,7 @@ const RiveList = ({ rives }: RiveListType) => {
               <View key={_id}>
                 <Container styles='p-8 rounded-md mb-4'>
                   <View className='flex-row items-center justify-between'>
+                    {/* @ts-ignore */}
                     <CurrencyFormatter value={price} />
 
                     <View className='flex-row items-center'>

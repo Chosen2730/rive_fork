@@ -4,6 +4,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { Alert, GestureResponderEvent, useColorScheme } from "react-native";
@@ -23,7 +24,7 @@ import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import io from "socket.io-client";
 
-const url = "https://rive-backend.vercel.app";
+const url = "https://rive.onrender.com/";
 const url2 = "http://localhost:3000";
 
 type TripDetailsType = {
@@ -108,6 +109,10 @@ export type AppContextType = {
   riveDetails: RiveType | null;
   getRiveDetails: any;
   deleteUser: any;
+  confirmPayment: Function;
+  isConfirming: boolean;
+  isVerifying: boolean;
+  verify: Function;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -137,6 +142,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [tripPrice, setTripPrice] = useState<number>(0);
   const [chosenRide, setChosenRide] = useState<RideType | null>(null);
   const [riveDetails, setRiveDetails] = useState<RiveType | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const userIdRef = useRef(userDetails?._id);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -291,6 +299,29 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const verify = async (reference: string, id: string) => {
+    setIsVerifying(true);
+    const url = `${baseURL}/rive/verify-payment`;
+    const url2 = `${baseURL}/rive/riveDetails/${id}`;
+    setIsLoading(true);
+    try {
+      await axios.post(url, { reference }, await config());
+      await axios.patch(url2, { paymentStatus: "Paid" }, await config());
+      socket.emit("confirmPayment", id);
+
+      setIsVerifying(false);
+      router.push("/complete");
+    } catch (error: any) {
+      logResult(error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    // setTimeout(() => {
+    //
+    // }, 3000);
+  };
+
   const bookRide = async () => {
     const url = `${baseURL}/rive`;
     setIsLoading(true);
@@ -305,9 +336,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
     try {
       const res = await axios.post(url, payload, await config());
-      // const riveId = res.data.rive._id;
+      const riveId = res.data.rive._id;
       socket.emit("bookRide");
-      await getRiveDetails();
+      router.push("/(home)/");
+      await getRiveDetails(riveId);
       Toast.show({
         text1: "Ride Booked",
         text2: "Your ride has been booked successfully",
@@ -326,28 +358,25 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     }
   };
-
   const getRives = async () => {
-    const id = userDetails?._id;
-    if (id === undefined) {
-      return;
-    }
-    const url = `${baseURL}/rive/userRives/${id}`;
-    setIsLoading(true);
-    try {
-      const res = await axios.get(url, await config());
-      setRives(res.data.rives);
-      // socket.emit("getRives");
-      // socket.emit("bookRide");
-    } catch (error: any) {
-      console.log(error.response.data.msg);
-    } finally {
-      setIsLoading(false);
+    const id = userDetails?._id || userIdRef.current;
+
+    if (id !== undefined) {
+      const url = `${baseURL}/rive/userRives/${id}`;
+      setIsLoading(true);
+      try {
+        const res = await axios.get(url, await config());
+        setRives(res.data.rives);
+      } catch (error: any) {
+        console.log(error.response.data.msg);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
-  const getRiveDetails = async () => {
-    const url = `${baseURL}/rive/user/rive`;
-    // const url = `${baseURL}/rive/riveDetails/${id}`;
+
+  const getRiveDetails = async (id: string) => {
+    const url = `${baseURL}/rive/riveDetails/${id}`;
     setIsLoading(true);
     try {
       const res = await axios.get(url, await config());
@@ -366,7 +395,25 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = data != null ? JSON.parse(data) : null;
       setUserDetails(currentUser);
     } catch (e) {
-      // error reading value
+      logResult(e);
+    }
+  };
+
+  const confirmPayment = async (id: string) => {
+    const url = `${baseURL}/rive/riveDetails/${id}`;
+    setIsLoading(true);
+    try {
+      const res = await axios.patch(
+        url,
+        { paymentStatus: "Paid" },
+        await config()
+      );
+      socket.emit("confirmPayment", id);
+      setIsConfirming(true);
+    } catch (error: any) {
+      logResult(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -386,9 +433,24 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }, [useLocation]);
 
   useEffect(() => {
+    userIdRef.current = userDetails?._id;
+  }, [isLoading, userDetails]);
+
+  useEffect(() => {
     socket.on("getStatus", (data) => {
-      console.log("status gotten");
-      getRiveDetails();
+      getRiveDetails(data);
+      getRives();
+    });
+
+    socket.on("getRives", () => {
+      getRives();
+    });
+    socket.on("tripCompleted", (id) => {
+      setIsConfirming(false);
+
+      getRiveDetails(id);
+      getRives();
+      router.push("/(home)");
     });
     return () => {
       socket.disconnect();
@@ -431,6 +493,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         riveDetails,
         getRiveDetails,
         deleteUser,
+        confirmPayment,
+        isConfirming,
+        verify,
+        isVerifying,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>
