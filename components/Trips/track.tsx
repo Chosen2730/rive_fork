@@ -1,24 +1,37 @@
 import { View } from "react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useGlobalContext } from "../../AppContext/context";
+import {
+  CoordType,
+  logResult,
+  useGlobalContext,
+} from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
 import { Image } from "react-native";
 
 const TrackMap = () => {
-  const { MAPS_KEY2, riveDetails } = useGlobalContext();
+  const { MAPS_KEY2, riveDetails, driverLocation, setDriverLocation } =
+    useGlobalContext();
   const mapRef = useRef<MapView | null>(null);
 
   const pickupLocation = riveDetails?.origin;
   const destinationLocation = riveDetails?.destination;
-  const driverLocation = riveDetails?.driver;
   const tripStatus = riveDetails?.tripStatus;
   const cancelled = tripStatus === "cancelled";
   const completed = tripStatus === "completed";
+  const approaching = tripStatus === "driver approaching";
+
+  useEffect(() => {
+    //@ts-ignore
+    setDriverLocation(riveDetails?.driver);
+  }, []);
 
   useEffect(() => {
     if (mapRef.current !== null) {
-      const markersToFit = ["destination"];
+      const markersToFit = ["origin"];
+      if (!approaching && destinationLocation) {
+        markersToFit.push("destination");
+      }
       if (pickupLocation) {
         markersToFit.push("origin");
       }
@@ -29,7 +42,7 @@ const TrackMap = () => {
         edgePadding: { bottom: 50, left: 50, right: 50, top: 50 },
       });
     }
-  }, [pickupLocation, destinationLocation, driverLocation]);
+  }, [pickupLocation, destinationLocation, driverLocation, tripStatus]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -97,7 +110,7 @@ const TrackMap = () => {
               latitude: driverLocation?.lat,
             }}
             description={driverLocation?.desc}
-            title={"Driver Destination"}
+            title={driverLocation?.desc}
             identifier='driver'
             pinColor='#0000ff'
           >
@@ -110,7 +123,7 @@ const TrackMap = () => {
             </View>
           </Marker>
         )}
-        {driverLocation && pickupLocation && (
+        {!(cancelled || completed) && driverLocation && pickupLocation && (
           <MapViewDirections
             // @ts-ignore
             origin={
@@ -126,7 +139,7 @@ const TrackMap = () => {
               latitude: driverLocation?.lat,
             }}
             apikey={MAPS_KEY2}
-            strokeColor='green'
+            strokeColor='red'
             strokeWidth={3}
           />
         )}

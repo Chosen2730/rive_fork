@@ -6,7 +6,6 @@ import {
   Container,
   Text,
   TextButton,
-  TextField,
   iconColor,
 } from "../../components/Elements";
 import { useRouter } from "expo-router";
@@ -15,7 +14,6 @@ import CustomModal from "../../components/Elements/customModal";
 import { logResult, useGlobalContext } from "../../AppContext/context";
 import CurrencyFormatter from "../../components/Elements/currency";
 import { Paystack, paystackProps } from "react-native-paystack-webview";
-("react-native-gesture-handler");
 
 const PaymentMethod = () => {
   const router = useRouter();
@@ -31,7 +29,6 @@ const PaymentMethod = () => {
   } = useGlobalContext();
   const { price, assignedDriver } = riveDetails || {};
   const paystackWebViewRef = useRef<paystackProps.PayStackRef>();
-  // logResult({ riveDetails });
   const paymentMethods = [
     "Bank Transfer",
     "Internet Banking",

@@ -52,7 +52,7 @@ type RideType = {
   isRecommended?: boolean;
   _id?: string;
 };
-type CoordType = {
+export type CoordType = {
   lng: number;
   lat: number;
   desc: string;
@@ -113,6 +113,8 @@ export type AppContextType = {
   isConfirming: boolean;
   isVerifying: boolean;
   verify: Function;
+  driverLocation: CoordType | null;
+  setDriverLocation: Dispatch<CoordType | null>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -120,7 +122,7 @@ const AppContext = createContext<AppContextType | null>(null);
 export const useGlobalContext = () => {
   return useContext(AppContext) as AppContextType;
 };
-export const socket = io(url2);
+export const socket = io(url);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const colorScheme = useColorScheme();
@@ -145,6 +147,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isConfirming, setIsConfirming] = useState(false);
   const userIdRef = useRef(userDetails?._id);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [driverLocation, setDriverLocation] = useState<CoordType | null>(null);
 
   // FUNCTIONS
   const toggleTheme = () => {
@@ -305,8 +308,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const url2 = `${baseURL}/rive/riveDetails/${id}`;
     setIsLoading(true);
     try {
-      await axios.post(url, { reference }, await config());
-      await axios.patch(url2, { paymentStatus: "Paid" }, await config());
+      await axios.post(url, { reference, riveId: id }, await config());
+      // await axios.patch(url2, { paymentStatus: "Paid" }, await config());
       socket.emit("confirmPayment", id);
 
       setIsVerifying(false);
@@ -316,10 +319,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-
-    // setTimeout(() => {
-    //
-    // }, 3000);
   };
 
   const bookRide = async () => {
@@ -447,15 +446,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     });
     socket.on("tripCompleted", (id) => {
       setIsConfirming(false);
-
       getRiveDetails(id);
       getRives();
       router.push("/(home)");
+    });
+    socket.on("driverLocationChanged", (data) => {
+      setDriverLocation(data);
     });
     return () => {
       socket.disconnect();
     };
   }, []);
+
+  // logResult(riveDetails);
 
   return (
     <AppContext.Provider
@@ -497,6 +500,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         isConfirming,
         verify,
         isVerifying,
+        driverLocation,
+        setDriverLocation,
       }}
     >
       <ThemeProvider value={theme}>{children}</ThemeProvider>
