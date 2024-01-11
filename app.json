@@ -17,7 +17,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.chosen.rive",
       "config": {
-        "googleMapsApiKey": "AIzaSyDqLRxR4YRIWJubKs634IeZGUxa8HxX3dw"
+        "googleMapsApiKey": ""
       },
       "buildNumber": "3"
     },
@@ -29,7 +29,7 @@
       "package": "com.chosen.rive",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCKymTvY3b9L1e7ERa0E2cbLBlTTk_rgMc"
+          "apiKey": ""
         }
       },
       "permissions": [
@@ -60,7 +60,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "c11a90e5-d6e3-4457-bd83-b4bc1111be9d"
+        "projectId": ""
       }
     }
   }

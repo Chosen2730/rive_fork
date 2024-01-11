@@ -57,6 +57,7 @@ export type CoordType = {
   lat: number;
   desc: string;
 };
+
 export type RiveType = {
   assignedDriver: UserDetailsType;
   _id: string;
@@ -284,12 +285,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // const new1 = process.env.MAPS_API_KEY;
+  // console.log(new1);
+
   const getTripPrice = async () => {
     const url = `${baseURL}/multiplier/getTripPrice`;
     setIsLoading(true);
     const payload = {
       distance: tripDetails?.distance.value,
-      ride: chosenRide?._id,
+      ride: chosenRide?._id || rides[0]?._id,
     };
     try {
       const res = await axios.post(url, payload, await config());

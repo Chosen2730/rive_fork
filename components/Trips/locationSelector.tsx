@@ -1,8 +1,7 @@
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
 import React, { Dispatch } from "react";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useGlobalContext } from "../../AppContext/context";
-
 type LocationSelectorType = {
   setLocationDetails: Dispatch<any>;
   place: string;
@@ -15,7 +14,6 @@ const LocationSelector = ({
     MAPS_KEY2,
     theme: { dark },
   } = useGlobalContext();
-  // console.log(MAPS_KEY2);
   return (
     <View>
       <GooglePlacesAutocomplete
@@ -50,6 +48,7 @@ const LocationSelector = ({
           key: MAPS_KEY2,
           language: "en",
           components: "country:NG",
+          administrativeArea: "Ogun",
         }}
       />
     </View>

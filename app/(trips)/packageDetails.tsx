@@ -4,35 +4,19 @@ import {
   Platform,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button, Text, paddingTop } from "../../components/Elements";
 import { FlatList } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useGlobalContext } from "../../AppContext/context";
 import CurrencyFormatter from "../../components/Elements/currency";
 
 const PackageDetails = () => {
   const [selectedRideIndex, setSelectedRideIndex] = useState(0);
-  const {
-    theme: dark,
-    completeTrip,
-    getRides,
-    rides,
-    isLoading,
-    setChosenRide,
-    getTripPrice,
-  } = useGlobalContext();
-  const vehicles = [
-    {
-      vehicle: require("../../assets/images/home/Car.png"),
-    },
-    {
-      vehicle: require("../../assets/images/home/Objects.png"),
-    },
-  ];
+  const { getRides, rides, isLoading, setChosenRide, getTripPrice } =
+    useGlobalContext();
 
   const extraPad = Platform.OS !== "ios" ? paddingTop + 20 : paddingTop;
 
@@ -46,9 +30,14 @@ const PackageDetails = () => {
     setChosenRide(rides[selectedRideIndex]);
   }, [selectedRideIndex]);
 
-  useEffect(() => {
-    setChosenRide(rides[0]);
-  }, []);
+  const navigation = useNavigation();
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     setChosenRide(rides[0]);
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   // console.log(rides);
   if (isLoading) {

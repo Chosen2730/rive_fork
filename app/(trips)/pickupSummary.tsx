@@ -108,7 +108,7 @@ const PickupSummary = () => {
             }}
             className='border-b-[1px] my-2'
           />
-          <CurrencyFormatter value={tripPrice} />
+          <CurrencyFormatter value={Number(tripPrice)} />
         </Container>
         <Button
           action={bookRide}

@@ -82,7 +82,7 @@ const Welcome = () => {
             </View>
           </View>
           <Button
-            action={() => router.push("/(trips)/newTrip")}
+            action={() => router.push("/(trips)/newTrip2")}
             label='Take a Ride'
             bgColor='#3EA2FF'
             textColor='#fff'
