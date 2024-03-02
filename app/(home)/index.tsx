@@ -9,7 +9,7 @@ import {
 } from "../../components/Elements";
 
 import { Image, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NoRives from "../../components/Home/noRives";
 import RiveList from "../../components/Home/riveList";
@@ -89,16 +89,15 @@ const Welcome = () => {
           />
         </Container>
       </View>
-      <ScrollView className='flex-1 mt-5' showsVerticalScrollIndicator={false}>
-        {isLoading ? (
-          <View className='flex-1 items-center justify-center'>
-            <ActivityIndicator />
-          </View>
-        ) : rives?.length < 1 ? (
-          <NoRives />
-        ) : (
-          <RiveList rives={rives} />
-        )}
+      <ScrollView
+        refreshControl={
+          //@ts-ignore
+          <RefreshControl refreshing={isLoading} onRefresh={getRives} />
+        }
+        className='flex-1 mt-5'
+        showsVerticalScrollIndicator={false}
+      >
+        {rives?.length < 1 ? <NoRives /> : <RiveList rives={rives} />}
       </ScrollView>
     </SafeAreaView>
   );

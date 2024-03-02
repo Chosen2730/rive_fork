@@ -1,14 +1,8 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
-import { AppProvider, useGlobalContext } from "../AppContext/context";
+import { AppProvider } from "../AppContext/context";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -50,7 +44,6 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
   const [token, setToken] = useState<string>("");
   const getToken = async () => {
     try {

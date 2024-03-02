@@ -11,13 +11,13 @@ import {
 } from "../../components/Elements";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, RefreshControl } from "react-native-gesture-handler";
 import { useGlobalContext } from "../../AppContext/context";
 import dateFormat from "dateformat";
 import CurrencyFormatter from "../../components/Elements/currency";
 import NoRives from "../../components/Home/noRives";
 const History = () => {
-  const { rives, isLoading, getRiveDetails } = useGlobalContext();
+  const { rives, isLoading, getRiveDetails, getRives } = useGlobalContext();
   return (
     <SafeAreaView className='p-4 flex-1' style={{ paddingTop, paddingBottom }}>
       <View className='flex-row items-center justify-between mt-10 mb-5'>
@@ -45,6 +45,10 @@ const History = () => {
         <FlatList
           data={rives}
           className='flex-1'
+          refreshControl={
+            //@ts-ignore
+            <RefreshControl refreshing={isLoading} onRefresh={getRives} />
+          }
           renderItem={({ item }) => {
             const {
               createdAt,
