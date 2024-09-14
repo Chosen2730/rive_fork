@@ -40,6 +40,7 @@ const OTPInput = ({ input, setOtpInput }: OTPType) => {
 				borderBottomWidth: 1,
 				backgroundColor: dark ? "#61677A" : "#F5F5F5",
 				borderRadius: 4,
+				flex: 1,
 			}}
 			handleTextChange={setOtpInput}
 			handleCellTextChange={handleCellTextChange}

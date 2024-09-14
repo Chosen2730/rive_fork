@@ -13,9 +13,6 @@ import {
 	DarkTheme,
 	ThemeProvider,
 } from "@react-navigation/native";
-import { GOOGLE_MAPS_API_KEY as MAPS_KEY } from "@env";
-// @ts-ignore
-import { MAPS_API_KEY as MAPS_KEY2 } from "@env";
 import * as Location from "expo-location";
 import axios from "axios";
 import { baseURL, config } from "../api";
@@ -23,9 +20,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import Toast from "react-native-toast-message";
 import io from "socket.io-client";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const url = "https://rive.onrender.com/";
 const url2 = "http://localhost:3000";
+
+// console.log(PAYSTACK_PK);
+
+const showAlert = ({
+	type,
+	title,
+	message,
+}: {
+	type: string;
+	title: string;
+	message: string;
+}) => {
+	return Toast.show({
+		text1: title,
+		text2: message,
+		type: type,
+		position: "bottom",
+	});
+};
 
 type TripDetailsType = {
 	distance: {
@@ -52,6 +69,7 @@ type RideType = {
 	type?: string;
 	isRecommended?: boolean;
 	_id?: string;
+	ride_id?: string;
 };
 export type CoordType = {
 	lng: number;
@@ -76,10 +94,11 @@ export type RiveType = {
 	driver: CoordType;
 };
 
+export type TripPriceType = RideType[];
+
 export type AppContextType = {
 	theme: typeof DefaultTheme | typeof DarkTheme;
 	toggleTheme: () => void;
-	MAPS_KEY: string;
 	pickupLocation: any;
 	setPickupLocation: Dispatch<any>;
 	destinationLocation: any;
@@ -89,7 +108,6 @@ export type AppContextType = {
 	completeTrip: Function;
 	useLocation: boolean;
 	setUseLocation: Dispatch<boolean>;
-	MAPS_KEY2: string;
 	getDistance: Function;
 	tripDetails: TripDetailsType | null;
 	userInput: UserDetailsType | null;
@@ -102,7 +120,7 @@ export type AppContextType = {
 	getSavedUser: Function;
 	rides: RideType[];
 	getRides: Function;
-	tripPrice: number;
+	tripPrice: TripPriceType;
 	getTripPrice: Function;
 	setChosenRide: Dispatch<RideType | null>;
 	bookRide: any;
@@ -117,6 +135,9 @@ export type AppContextType = {
 	verify: Function;
 	driverLocation: CoordType | null;
 	setDriverLocation: Dispatch<CoordType | null>;
+	selectedRideIndex: number;
+	setSelectedRideIndex: Dispatch<number>;
+	chosenRide: RideType | null;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -143,13 +164,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [rides, setRides] = useState<RideType[] | []>([]);
 	const [rives, setRives] = useState<RiveType[] | []>([]);
-	const [tripPrice, setTripPrice] = useState<number>(0);
+	const [tripPrice, setTripPrice] = useState<TripPriceType | []>([]);
 	const [chosenRide, setChosenRide] = useState<RideType | null>(null);
 	const [riveDetails, setRiveDetails] = useState<RiveType | null>(null);
 	const [isConfirming, setIsConfirming] = useState(false);
 	const userIdRef = useRef(userDetails?._id);
 	const [isVerifying, setIsVerifying] = useState(false);
 	const [driverLocation, setDriverLocation] = useState<CoordType | null>(null);
+	const [selectedRideIndex, setSelectedRideIndex] = useState(0);
 
 	// FUNCTIONS
 	const toggleTheme = () => {
@@ -202,30 +224,33 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		const destinations = `${lat2},${lng2}`;
 		const API_ENDPOINT =
 			"https://maps.googleapis.com/maps/api/distancematrix/json";
+		setIsLoading(true);
 		try {
 			const response = await axios.get(API_ENDPOINT, {
 				params: {
 					origins,
 					destinations,
-					key: MAPS_KEY2,
+					key: process.env.EXPO_PUBLIC_MAPS_API_KEY,
 				},
 			});
 
 			if (response.data.status === "OK") {
 				const distanceRes = response.data.rows[0].elements[0].distance;
 				const text = distanceRes.text;
-				const value: number = distanceRes.value;
+				const value: number = distanceRes?.value;
 
 				const duration: string =
 					response.data.rows[0].elements[0].duration.text;
-				const durValue = response.data.rows[0].elements[0].duration.value;
+				const durValue = response?.data?.rows[0]?.elements[0]?.duration?.value;
 				const distance = { text, value };
 				setTripDetails({ distance, duration, durValue });
+				getTripPrice(value, durValue);
 			} else {
 				throw new Error("Distance Matrix API request failed");
 			}
 		} catch (error) {
 			console.error("Error fetching data: ", error);
+			setIsLoading(false);
 			throw error;
 		}
 	};
@@ -257,7 +282,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 					text: "Yes",
 					onPress: async () => {
 						try {
-							const res = await axios.delete(url, await config());
+							await axios.delete(url, await config());
 							await AsyncStorage.clear();
 							router.push("/(onboarding)/login");
 						} catch (error: any) {
@@ -286,20 +311,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		}
 	};
 
-	const getTripPrice = async () => {
+	const getTripPrice = async (distance: any, duration: any) => {
 		const url = `${baseURL}/price/getTripPrice`;
-		setIsLoading(true);
 		const payload = {
-			distance: tripDetails?.distance.value,
-			ride: chosenRide?._id || rides[0]?._id,
-			duration: tripDetails?.durValue,
+			distance,
+			duration,
 		};
 		try {
 			const res = await axios.post(url, payload, await config());
-			setTripPrice(res.data.tripPrice);
-			router.replace("/(trips)/pickupSummary");
+			// logResult(res.data);
+			setTripPrice(res.data);
+			router.push("/(trips)/packageDetails");
 		} catch (error: any) {
-			console.log(error.response.data);
+			showAlert({
+				message: error.response.data.msg,
+				title: "Error getting trip price",
+				type: "error",
+			});
 		} finally {
 			setIsLoading(false);
 		}
@@ -329,9 +357,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 		setIsLoading(true);
 		const payload = {
 			distance: tripDetails?.distance.value,
-			ride: chosenRide?._id,
+			ride: chosenRide?.ride_id,
 			duration: tripDetails?.duration,
-			price: tripPrice,
+			price: chosenRide?.price,
 			user: userDetails?._id,
 			destination: destinationLocation,
 			origin: pickupLocation,
@@ -468,7 +496,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 			value={{
 				theme,
 				toggleTheme,
-				MAPS_KEY,
 				destinationLocation,
 				pickupLocation,
 				setDestinationLocation,
@@ -478,7 +505,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 				completeTrip,
 				useLocation,
 				setUseLocation,
-				MAPS_KEY2,
 				getDistance,
 				tripDetails,
 				userInput,
@@ -505,9 +531,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 				isVerifying,
 				driverLocation,
 				setDriverLocation,
+				selectedRideIndex,
+				setSelectedRideIndex,
+				chosenRide,
 			}}
 		>
-			<ThemeProvider value={theme}>{children}</ThemeProvider>
+			<GestureHandlerRootView>
+				<ThemeProvider value={theme}>{children}</ThemeProvider>
+			</GestureHandlerRootView>
 		</AppContext.Provider>
 	);
 };

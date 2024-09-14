@@ -17,7 +17,7 @@
 			"supportsTablet": true,
 			"bundleIdentifier": "com.chosen.rive",
 			"config": {
-				"googleMapsApiKey": ""
+				"googleMapsApiKey": "AIzaSyDObYG8CcMB6YuEvTOy7o5IQFi9ZqmuDbo"
 			},
 			"buildNumber": "4"
 		},
@@ -29,7 +29,7 @@
 			"package": "com.chosen.rive",
 			"config": {
 				"googleMaps": {
-					"apiKey": ""
+					"apiKey": "AIzaSyC3EoN2pLfAZOh0Cll_NUGrlPuOq3oYir4"
 				}
 			},
 			"permissions": [

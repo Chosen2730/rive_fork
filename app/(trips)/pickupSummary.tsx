@@ -9,10 +9,11 @@ import {
 	Button,
 } from "../../components/Elements";
 
-import { Image, Platform, SafeAreaView, View } from "react-native";
+import { Image, Platform, View } from "react-native";
 import { useGlobalContext } from "../../AppContext/context";
 import { ScrollView } from "react-native-gesture-handler";
 import CurrencyFormatter from "../../components/Elements/currency";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PickupSummary = () => {
 	const router = useRouter();
@@ -20,12 +21,12 @@ const PickupSummary = () => {
 		pickupLocation,
 		destinationLocation,
 		tripDetails,
-		tripPrice,
 		theme: { dark },
 		bookRide,
 		isLoading,
+		selectedRideIndex,
+		chosenRide,
 	} = useGlobalContext();
-
 	return (
 		<SafeAreaView
 			style={{ paddingTop: Platform.OS === "android" ? 40 : 0 }}
@@ -110,7 +111,7 @@ const PickupSummary = () => {
 						}}
 						className='border-b-[1px] my-2'
 					/>
-					<CurrencyFormatter value={Number(tripPrice)} />
+					<CurrencyFormatter value={Number(chosenRide?.price)} />
 				</Container>
 				<Button
 					action={bookRide}

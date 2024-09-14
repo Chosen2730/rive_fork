@@ -1,17 +1,16 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import React, { useEffect, useRef } from "react";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {
+	Marker,
+	PROVIDER_DEFAULT,
+	PROVIDER_GOOGLE,
+} from "react-native-maps";
 import { useGlobalContext } from "../../AppContext/context";
 import MapViewDirections from "react-native-maps-directions";
 
 const Map = () => {
-	const {
-		pickupLocation,
-		destinationLocation,
-		useLocation,
-		location,
-		MAPS_KEY2,
-	} = useGlobalContext();
+	const { pickupLocation, destinationLocation, useLocation, location } =
+		useGlobalContext();
 	const mapRef = useRef<MapView | null>(null);
 
 	useEffect(() => {
@@ -33,7 +32,9 @@ const Map = () => {
 	return (
 		<View style={{ flex: 1 }}>
 			<MapView
-				provider={PROVIDER_GOOGLE}
+				provider={
+					Platform.OS === "android" ? PROVIDER_GOOGLE : PROVIDER_DEFAULT
+				}
 				ref={mapRef}
 				region={{
 					latitude: pickupLocation?.lat,
@@ -57,7 +58,7 @@ const Map = () => {
 							longitude: destinationLocation?.lng,
 							latitude: destinationLocation?.lat,
 						}}
-						apikey={MAPS_KEY2}
+						apikey={process.env.EXPO_PUBLIC_MAPS_API_KEY!}
 						strokeColor='red'
 						strokeWidth={3}
 					/>

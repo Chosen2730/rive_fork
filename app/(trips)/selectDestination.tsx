@@ -12,7 +12,6 @@ import {
 import { Image, View } from "react-native";
 import LocationSelector from "../../components/Trips/locationSelector";
 import { useGlobalContext } from "../../AppContext/context";
-import CurrentMap from "../../components/Trips/currentLocationMap";
 import Map from "../../components/Trips/map";
 
 const Trips = () => {
@@ -26,6 +25,7 @@ const Trips = () => {
 		location,
 		pickupLocation,
 		getDistance,
+		isLoading,
 	} = useGlobalContext();
 
 	return (
@@ -84,9 +84,9 @@ const Trips = () => {
 				isDisabled={destinationLocation === null && true}
 				action={() => {
 					getDistance();
-					router.push("/(trips)/packageDetails");
 				}}
 				label='Continue'
+				loadingState={isLoading}
 				bgColor='#3EA2FF'
 				textColor='white'
 				styles='my-4'
