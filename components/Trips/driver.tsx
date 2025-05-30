@@ -2,10 +2,11 @@ import { Image, Linking, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { Container, Text } from "../Elements";
 import { CallIcon } from "../../assets/svg";
-import { useGlobalContext } from "../../AppContext/context";
+import { logResult, useGlobalContext } from "../../AppContext/context";
 
 const Driver = () => {
 	const { riveDetails } = useGlobalContext();
+	logResult(riveDetails);
 	return (
 		<View className='flex-row items-center mx-4 my-2 rounded-md overflow-hidden border-[1px] border-[#BDCDD6] h-20'>
 			<Container
@@ -24,13 +25,26 @@ const Driver = () => {
 							color='black'
 							bold
 						/>
-						<Text xs text='Driver' styles='mt-1' color='#7A7A7A' />
+						<Text
+							color='#7A7A7A'
+							styles='text-right'
+							text={riveDetails?.assignedDriver?.licencePlateNumber}
+						/>
 					</View>
 				</View>
 				<View className='flex-row'>
 					<View>
-						{/* <Text color='#7A7A7A' styles='text-right' text='ETA: 5 Mins' /> */}
-						{/* <Text color='#7A7A7A' styles='text-right' text='LVHJ321' /> */}
+						<Text
+							xs
+							text={riveDetails?.assignedDriver?.automobileName}
+							styles='mt-1'
+							color='#7A7A7A'
+						/>
+						<Text
+							color='#7A7A7A'
+							styles='text-right'
+							text={`Color: ${riveDetails?.assignedDriver?.automobileColor}`}
+						/>
 					</View>
 				</View>
 			</Container>

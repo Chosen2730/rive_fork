@@ -46,6 +46,12 @@ const PaymentMethod = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (riveDetails?.paymentStatus === "Paid") {
+			setIsModalShown(false);
+		}
+	}, [riveDetails?.paymentStatus]);
+
 	return (
 		<SafeAreaView className='p-4 flex-1'>
 			<Ionicons

@@ -59,6 +59,10 @@ type UserDetailsType = {
 	email?: string;
 	tel?: string;
 	paymentMethod?: string;
+	typeOfAutomobile?: string;
+	licencePlateNumber?: string;
+	automobileColor?: string;
+	automobileName?: string;
 	_id?: string;
 };
 
@@ -158,6 +162,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 	const [destinationLocation, setDestinationLocation] = useState<any>(null);
 	const [location, setLocation] = useState<any>(null);
 	const [useLocation, setUseLocation] = useState(false);
+
 	const [tripDetails, setTripDetails] = useState<TripDetailsType | null>(null);
 	const [userInput, setUserInput] = useState<UserDetailsType | null>(null);
 	const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
